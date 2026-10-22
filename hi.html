@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Hi, I'm Olivia</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400&family=Inter:wght@200;300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#151515; --pen:#2233cc; --soft:#8b8b8b;
+  --sans:"Inter",-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+  --dur:.62s;          /* duração de cada palavra */
+  --gap:.12s;          /* atraso entre uma palavra e a próxima */
+  --inicio:.18s;       /* espera antes de começar */
+  --mola:cubic-bezier(.16,1,.3,1);
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:#fff;color:var(--ink);font-family:var(--sans);
+  display:flex;align-items:center;justify-content:center;overflow:hidden}
+
+.fala{margin:0;font-weight:300;letter-spacing:-.04em;
+  font-size:clamp(34px,8.2vw,92px);line-height:1;
+  display:flex;flex-wrap:wrap;justify-content:center;gap:0 .26em;padding:0 22px}
+.pal{overflow:hidden;display:inline-block;padding-bottom:.08em}
+.pal>span{display:inline-block;transform:translateY(110%);
+  animation:sobe var(--dur) var(--mola) forwards}
+@keyframes sobe{to{transform:translateY(0)}}
+.pal:nth-child(1)>span{animation-delay:var(--inicio)}
+.pal:nth-child(2)>span{animation-delay:calc(var(--inicio) + var(--gap))}
+.pal:nth-child(3)>span{animation-delay:calc(var(--inicio) + var(--gap)*2)}
+em{font-style:normal;font-weight:500}
+.cur{display:inline-block;width:.07em;height:.82em;background:var(--pen);
+  margin-left:.12em;vertical-align:-.04em;opacity:0;
+  animation:surge .5s calc(var(--inicio) + var(--gap)*2 + var(--dur)*.9) forwards,
+            pisca 1s calc(var(--inicio) + var(--gap)*2 + var(--dur)*1.6) steps(1) infinite}
+@keyframes surge{to{opacity:1}}
+@keyframes pisca{0%,50%{opacity:1}51%,100%{opacity:0}}
+
+/* ---- a bancada ---- */
+.mesa{position:fixed;left:0;right:0;bottom:0;padding:14px 18px;
+  display:flex;align-items:center;gap:14px;flex-wrap:wrap;
+  font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--pen);border-top:1px solid #eceae6;background:#fff}
+.mesa button{all:unset;cursor:pointer;border:1.5px solid var(--pen);padding:5px 10px;line-height:1}
+.mesa button:hover{background:var(--pen);color:#fff}
+.ctrl{display:flex;align-items:center;gap:7px}
+.ctrl input[type=range]{width:88px;accent-color:var(--pen)}
+.ctrl output{min-width:42px;text-align:right;font-variant-numeric:tabular-nums}
+.mesa .dica{margin-left:auto;color:var(--soft);text-transform:none;letter-spacing:.02em}
+@media(max-width:640px){.mesa .dica{display:none}}
+@media (prefers-reduced-motion:reduce){.pal>span{transform:none;animation:none}.cur{opacity:1;animation:none}}
+</style>
+
+<p class="fala" id="fala" aria-label="Hi, I'm Olivia">
+  <span class="pal" aria-hidden="true"><span>Hi,</span></span>
+  <span class="pal" aria-hidden="true"><span>I'm</span></span>
+  <span class="pal" aria-hidden="true"><span><em>Olivia</em></span></span><span class="cur" aria-hidden="true"></span>
+</p>
+
+<div class="mesa">
+  <button id="play">&#9654; repetir</button>
+  <span class="ctrl"><label for="dur">dura</label>
+    <input type="range" id="dur" min="200" max="1600" step="20" value="620">
+    <output id="dur-v">620ms</output></span>
+  <span class="ctrl"><label for="gap">intervalo</label>
+    <input type="range" id="gap" min="0" max="500" step="10" value="120">
+    <output id="gap-v">120ms</output></span>
+  <span class="dica">barra de espaço repete</span>
+</div>
+
+<script>
+const raiz=document.documentElement;
+let alvo=document.getElementById('fala');
+function refaz(){ const nova=alvo.cloneNode(true); alvo.replaceWith(nova); alvo=nova; }
+document.getElementById('play').onclick=refaz;
+addEventListener('keydown',e=>{ if(e.code==='Space'){e.preventDefault();refaz();} });
+
+function liga(id, prop, sufixo){
+  const r=document.getElementById(id), o=document.getElementById(id+'-v');
+  r.addEventListener('input',()=>{
+    o.textContent=r.value+sufixo;
+    raiz.style.setProperty(prop, (r.value/1000)+'s');
+    refaz();
+  });
+}
+liga('dur','--dur','ms');
+liga('gap','--gap','ms');
+</script>
