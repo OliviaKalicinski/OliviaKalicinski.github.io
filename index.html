@@ -277,6 +277,14 @@ body.editing .term,body.editing .abrir{display:none}
   animation:introCur .5s .95s forwards, introPisca 1s 1.45s steps(1) infinite}
 @keyframes introCur{to{opacity:1}}
 @keyframes introPisca{0%,50%{opacity:1}51%,100%{opacity:0}}
+.intro .play{position:absolute;left:22px;bottom:22px;display:flex;align-items:center;gap:7px;
+  background:#fff;border:1.5px solid var(--pen);color:var(--pen);cursor:pointer;
+  font-family:"IBM Plex Mono",ui-monospace,Menlo,monospace;font-size:11px;
+  letter-spacing:.12em;text-transform:uppercase;padding:5px 10px;line-height:1;
+  opacity:0;animation:introCur .6s 1.6s forwards}
+.intro .play:hover{background:var(--pen);color:#fff}
+.intro .play span{letter-spacing:.12em}
+@media(max-width:560px){.intro .play{left:14px;bottom:16px}}
 .intro .pular{position:absolute;bottom:26px;left:0;right:0;text-align:center;
   font-family:"IBM Plex Mono",ui-monospace,Menlo,monospace;font-size:11px;
   letter-spacing:.14em;text-transform:uppercase;color:var(--soft);
@@ -376,6 +384,7 @@ footer{padding:86px 0 90px;max-width:980px;margin:0 auto}
     <span class="pal"><span>I'm</span></span>
     <span class="pal"><span><em>Olivia</em></span></span><span class="cur"></span>
   </p>
+  <button class="play" id="intro-play" aria-label="repetir a animação">&#9654;<span>repetir</span></button>
   <span class="pular" aria-hidden="true">clique para entrar</span>
 </div>
 <div class="wrap">
@@ -670,17 +679,30 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape')closeRoom()});
 (function(){
   const intro=document.getElementById('intro'); if(!intro) return;
   let vista=false; try{vista=sessionStorage.getItem('intro-vista')==='1';}catch(e){}
-  if(vista||location.search.indexOf('edit')>-1){ intro.remove(); return; }
+  if((vista&&location.search.indexOf('intro')<0)||location.search.indexOf('edit')>-1){ intro.remove(); return; }
   document.body.style.overflow='hidden';
   let saiu=false;
   function sai(){ if(saiu)return; saiu=true;
     try{sessionStorage.setItem('intro-vista','1');}catch(_){}
     intro.classList.add('sai'); document.body.style.overflow='';
     setTimeout(()=>{intro.remove(); if(window.ajusta)ajusta();},900); }
+  const teste=location.search.indexOf('intro')>-1;
+  let conta;
+  function agenda(){ clearTimeout(conta); if(teste)return;
+    const lento=matchMedia('(prefers-reduced-motion:reduce)').matches;
+    conta=setTimeout(sai, lento?600:2600); }
   intro.addEventListener('click',sai);
-  addEventListener('keydown',e=>{if(!saiu)sai();},{once:true});
-  const lento=matchMedia('(prefers-reduced-motion:reduce)').matches;
-  setTimeout(sai, lento?600:2600);
+  addEventListener('keydown',()=>{if(!saiu)sai();},{once:true});
+
+  /* repetir: troca o bloco por um clone, e a animação recomeça do zero */
+  const play=document.getElementById('intro-play');
+  play.addEventListener('click',e=>{
+    e.stopPropagation(); clearTimeout(conta);
+    const velha=intro.querySelector('.fala');
+    const nova=velha.cloneNode(true);
+    velha.replaceWith(nova);
+  });
+  agenda();
 })();
 
 /* ---- o mural cabe sempre na tela, seja qual for a janela ---- */
