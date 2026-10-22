@@ -5,7 +5,8 @@
   "r": 7,
   "sc": 1,
   "z": 6,
-  "del": false
+  "del": false,
+  "pola": false
  },
  "p1": {
   "l": -64,
@@ -13,7 +14,8 @@
   "r": -6,
   "sc": 0.858,
   "z": 10,
-  "del": false
+  "del": false,
+  "pola": false
  },
  "p2": {
   "l": 639,
@@ -21,7 +23,8 @@
   "r": -4,
   "sc": 1,
   "z": 8,
-  "del": false
+  "del": false,
+  "pola": false
  },
  "p3": {
   "l": -10,
@@ -29,7 +32,8 @@
   "r": 3,
   "sc": 0.857,
   "z": 5,
-  "del": false
+  "del": false,
+  "pola": false
  },
  "p4": {
   "l": 330,
@@ -37,7 +41,8 @@
   "r": -1.5,
   "sc": 1,
   "z": 20,
-  "del": false
+  "del": false,
+  "pola": false
  },
  "p5": {
   "l": 532,
@@ -45,7 +50,8 @@
   "r": 2.5,
   "sc": 1,
   "z": 8,
-  "del": false
+  "del": false,
+  "pola": false
  },
  "p6": {
   "l": 721,
@@ -53,7 +59,8 @@
   "r": -3.5,
   "sc": 1,
   "z": 7,
-  "del": false
+  "del": false,
+  "pola": false
  },
  "p7": {
   "l": 55,
@@ -61,7 +68,8 @@
   "r": -5,
   "sc": 1,
   "z": 11,
-  "del": false
+  "del": false,
+  "pola": false
  },
  "p8": {
   "l": 203,
@@ -69,7 +77,8 @@
   "r": 3,
   "sc": 1,
   "z": 13,
-  "del": false
+  "del": false,
+  "pola": false
  },
  "p9": {
   "l": 829,
@@ -77,7 +86,8 @@
   "r": -2,
   "sc": 1,
   "z": 9,
-  "del": false
+  "del": false,
+  "pola": false
  },
  "p14": {
   "l": 826,
@@ -85,7 +95,8 @@
   "r": -3.5,
   "sc": 1.166,
   "z": 11,
-  "del": false
+  "del": false,
+  "pola": false
  },
  "p10": {
   "l": 816,
@@ -93,7 +104,8 @@
   "r": 6,
   "sc": 1,
   "z": 4,
-  "del": false
+  "del": false,
+  "pola": false
  },
  "p13": {
   "l": 69,
@@ -101,7 +113,8 @@
   "r": 4,
   "sc": 1,
   "z": 5,
-  "del": false
+  "del": false,
+  "pola": false
  },
  "p12": {
   "l": 56,
@@ -109,7 +122,8 @@
   "r": -6,
   "sc": 1,
   "z": 8,
-  "del": false
+  "del": false,
+  "pola": false
  },
  "washi": {
   "l": 111,
@@ -117,7 +131,8 @@
   "r": -61,
   "sc": 1,
   "z": 8,
-  "del": false
+  "del": false,
+  "pola": false
  },
  "durex": {
   "l": 330,
@@ -125,7 +140,8 @@
   "r": -7,
   "sc": 1,
   "z": 70,
-  "del": false
+  "del": false,
+  "pola": false
  },
  "pinx": {
   "l": 270,
@@ -133,7 +149,8 @@
   "r": 0,
   "sc": 1,
   "z": 70,
-  "del": false
+  "del": false,
+  "pola": false
  },
  "sticker5": {
   "l": 793,
@@ -141,7 +158,8 @@
   "r": -6,
   "sc": 1,
   "z": 78,
-  "del": false
+  "del": false,
+  "pola": false
  },
  "sticker3": {
   "l": 294,
@@ -149,7 +167,8 @@
   "r": 7,
   "sc": 0.681,
   "z": 78,
-  "del": false
+  "del": false,
+  "pola": false
  },
  "sticker4": {
   "l": 141,
@@ -157,7 +176,8 @@
   "r": -7,
   "sc": 1,
   "z": 78,
-  "del": false
+  "del": false,
+  "pola": false
  },
  "sticker2": {
   "l": 753,
@@ -165,7 +185,8 @@
   "r": -9,
   "sc": 1,
   "z": 79,
-  "del": false
+  "del": false,
+  "pola": false
  },
  "sticker": {
   "l": 466,
@@ -173,7 +194,8 @@
   "r": -10,
   "sc": 1,
   "z": 80,
-  "del": false
+  "del": false,
+  "pola": false
  },
  "c1": {
   "l": 102,
@@ -181,7 +203,8 @@
   "r": 0,
   "sc": 1,
   "z": 70,
-  "del": false
+  "del": false,
+  "pola": false
  },
  "c2": {
   "l": 646,
@@ -189,7 +212,8 @@
   "r": 14,
   "sc": 1,
   "z": 70,
-  "del": false
+  "del": false,
+  "pola": false
  },
  "s1": {
   "l": 238,
@@ -197,7 +221,8 @@
   "r": 0,
   "sc": 1,
   "z": 71,
-  "del": false
+  "del": false,
+  "pola": false
  },
  "s2": {
   "l": 166,
@@ -205,7 +230,8 @@
   "r": 0,
   "sc": 1,
   "z": 71,
-  "del": false
+  "del": false,
+  "pola": false
  },
  "s3": {
   "l": 310,
@@ -213,6 +239,7 @@
   "r": 0,
   "sc": 1,
   "z": 71,
-  "del": false
+  "del": false,
+  "pola": false
  }
 }

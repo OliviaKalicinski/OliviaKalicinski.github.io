@@ -6,12 +6,13 @@
 <title>Hi, I'm Olivia</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,200..700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Architects+Daughter&family=DM+Sans:opsz,wght@9..40,200..700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root{
   --ink:#151515; --pen:#2233cc; --soft:#8b8b8b;
   --sans:"DM Sans",-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif;
   --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+  --hand:"Architects Daughter","Bradley Hand",cursive;
   --dur:.62s; --gap:.12s; --inicio:.18s;
   --mola:cubic-bezier(.16,1,.3,1);
 }
@@ -53,6 +54,13 @@ body.editing .sel{outline:2px solid var(--pen) !important;outline-offset:3px}
 body.editing .stk{outline:1px dashed rgba(34,51,204,.3)}
 body.editing .term,body.editing .abrir{display:none}
 
+.ph.pola{padding:11px 11px 42px;background:#fdfcf8;
+  box-shadow:0 3px 14px rgba(0,0,0,.18), 0 1px 2px rgba(0,0,0,.10)}
+.ph.pola img,.ph.pola video{height:100%}
+.ph.pola .nome{position:absolute;left:12px;right:12px;bottom:11px;height:26px;
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--hand,"Architects Daughter",cursive);font-size:15px;color:#2233cc;
+  text-align:center;line-height:1.1;overflow:hidden}
 .voltar{position:fixed;left:18px;top:16px;z-index:50;display:none;
   background:#fff;border:1.5px solid var(--pen);color:var(--pen);cursor:pointer;
   font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;
@@ -626,12 +634,19 @@ function lerCSS(el){
   if(m&&m!=='none'){const n=m.match(/matrix\(([^)]+)\)/);
     if(n){const [a,b]=n[1].split(',').map(parseFloat);
       r=Math.round(Math.atan2(b,a)*180/Math.PI*10)/10; sc=Math.round(Math.hypot(a,b)*1000)/1000;}}
-  return {l:parseFloat(cs.left)||0, t:parseFloat(cs.top)||0, r, sc, z:parseInt(cs.zIndex)||0, del:false};
+  return {l:parseFloat(cs.left)||0, t:parseFloat(cs.top)||0, r, sc, z:parseInt(cs.zIndex)||0,
+          del:false, pola:el.classList.contains('pola')};
 }
 function aplica(el){const c=clsOf(el), e=est[c]; if(!e)return;
   el.style.left=e.l+'px'; el.style.top=e.t+'px'; el.style.zIndex=e.z;
   el.style.transform='rotate('+e.r+'deg) scale('+e.sc+')';
-  el.style.display=e.del?'none':'';}
+  el.style.display=e.del?'none':'';
+  el.classList.toggle('pola', !!e.pola);
+  if(e.pola && !el.querySelector('.nome')){
+    const n=document.createElement('span'); n.className='nome';
+    n.textContent=(el.querySelector('.go')||{}).textContent?.replace(/\s*→\s*$/,'')||'';
+    el.appendChild(n);
+  }}
 function aviso(txt){const b=document.querySelector('#edbar span');if(b)b.textContent=txt;}
 let pendente=null;
 function guarda(){
@@ -701,13 +716,15 @@ function modo(on){edit=on;document.body.classList.toggle('editing',on); if(!on) 
       +'<button id="eb-">–</button><button id="eb+">+</button>'
       +'<button id="ebl">↺</button><button id="ebr">↻</button>'
       +'<button id="ebf">frente</button><button id="ebb">trás</button>'
+      +'<button id="ebp">polaroid</button>'
       +'<button id="ebd">apagar</button>'
       +'<button id="eds">salvar</button>'
       +'<button id="edc">copiar</button><button id="edr">padrão</button><button id="edx">sair</button>';
     document.body.appendChild(bar);
     const on_=(id,f)=>document.getElementById(id).onclick=f;
     on_('eb-',menor);on_('eb+',maior);on_('ebl',giraE);on_('ebr',giraD);
-    on_('ebf',frente);on_('ebb',tras);on_('ebd',apaga);on_('edc',copia);on_('eds',()=>{aviso('salvando…');guarda();});
+    on_('ebf',frente);on_('ebb',tras);on_('ebd',apaga);
+    on_('ebp',()=>{ if(!sel)return; mexe(e=>e.pola=!e.pola); ajustaMural(); });on_('edc',copia);on_('eds',()=>{aviso('salvando…');guarda();});
     on_('edr',()=>{ if(!confirm('Voltar o mural ao padrão e perder o arranjo salvo?'))return;
       localStorage.removeItem(POS_KEY);
       fetch('/salvar-hi',{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'})
@@ -723,6 +740,7 @@ document.addEventListener('keydown',ev=>{
   const k=ev.key, c=clsOf(sel);
   if(k==='+'||k==='='){maior();ev.preventDefault();}
   else if(k==='-'||k==='_'){menor();ev.preventDefault();}
+  else if(k==='p'||k==='P'){ if(sel){mexe(e=>e.pola=!e.pola); ajustaMural();} }
   else if(k==='['){giraE();}
   else if(k===']'){giraD();}
   else if(k==='.'){frente();}
