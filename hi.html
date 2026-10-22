@@ -57,10 +57,6 @@ body.editing .term,body.editing .abrir{display:none}
 .ph.pola{padding:11px 11px 42px;background:#fdfcf8;
   box-shadow:0 3px 14px rgba(0,0,0,.18), 0 1px 2px rgba(0,0,0,.10)}
 .ph.pola img,.ph.pola video{height:100%}
-.ph.pola .nome{position:absolute;left:12px;right:12px;bottom:11px;height:26px;
-  display:flex;align-items:center;justify-content:center;
-  font-family:var(--hand,"Architects Daughter",cursive);font-size:15px;color:#2233cc;
-  text-align:center;line-height:1.1;overflow:hidden}
 .voltar{position:fixed;left:18px;top:16px;z-index:50;display:none;
   background:#fff;border:1.5px solid var(--pen);color:var(--pen);cursor:pointer;
   font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;
@@ -641,12 +637,7 @@ function aplica(el){const c=clsOf(el), e=est[c]; if(!e)return;
   el.style.left=e.l+'px'; el.style.top=e.t+'px'; el.style.zIndex=e.z;
   el.style.transform='rotate('+e.r+'deg) scale('+e.sc+')';
   el.style.display=e.del?'none':'';
-  el.classList.toggle('pola', !!e.pola);
-  if(e.pola && !el.querySelector('.nome')){
-    const n=document.createElement('span'); n.className='nome';
-    n.textContent=(el.querySelector('.go')||{}).textContent?.replace(/\s*→\s*$/,'')||'';
-    el.appendChild(n);
-  }}
+  el.classList.toggle('pola', !!e.pola);}
 function aviso(txt){const b=document.querySelector('#edbar span');if(b)b.textContent=txt;}
 let pendente=null;
 function guarda(){
