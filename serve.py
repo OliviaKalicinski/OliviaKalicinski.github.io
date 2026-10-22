@@ -11,7 +11,12 @@ class H(SimpleHTTPRequestHandler):
         super().__init__(*a, directory=RAIZ, **kw)
 
     def do_POST(self):
-        if self.path.rstrip('/') != '/salvar':
+        alvo = self.path.rstrip('/')
+        if alvo == '/salvar':
+            nome = 'layout.json'
+        elif alvo == '/salvar-hi':
+            nome = 'layout-hi.json'
+        else:
             self.send_error(404); return
         n = int(self.headers.get('Content-Length') or 0)
         corpo = self.rfile.read(n)
@@ -22,9 +27,9 @@ class H(SimpleHTTPRequestHandler):
         os.makedirs(BAK, exist_ok=True)
         carimbo = datetime.datetime.now().strftime('%Y-%m-%d-%H%M%S')
         texto = json.dumps(dados, ensure_ascii=False, indent=1)
-        with open(os.path.join(BAK, 'layout-%s.json' % carimbo), 'w') as f:
+        with open(os.path.join(BAK, nome.replace('.json','') + '-%s.json' % carimbo), 'w') as f:
             f.write(texto)
-        with open(os.path.join(RAIZ, 'layout.json'), 'w') as f:
+        with open(os.path.join(RAIZ, nome), 'w') as f:
             f.write(texto)
         r = json.dumps({'ok': True, 'em': carimbo}).encode()
         self.send_response(200)

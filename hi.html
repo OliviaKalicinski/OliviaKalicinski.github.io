@@ -44,6 +44,15 @@ body{margin:0;background:#fff;color:var(--ink);font-family:var(--sans);overflow:
 .s1{left:238px;top:596px;width:70px;height:60px}
 .s2{left:166px;top:184px;width:112px;height:104px}
 .s3{left:470px;top:230px;width:92px;height:58px}
+.sel{outline:2px solid var(--pen) !important;outline-offset:3px}
+body.editing .ph,body.editing .stk{cursor:grab}
+body.editing .ph:active,body.editing .stk:active{cursor:grabbing}
+body.editing .ph{outline:1px dashed rgba(34,51,204,.45);outline-offset:2px}
+body.editing .fx,body.editing .scrib,body.editing .mark{cursor:grab;pointer-events:auto}
+body.editing .sel{outline:2px solid var(--pen) !important;outline-offset:3px}
+body.editing .stk{outline:1px dashed rgba(34,51,204,.3)}
+body.editing .term,body.editing .abrir{display:none}
+
 .voltar{position:fixed;left:18px;top:16px;z-index:50;display:none;
   background:#fff;border:1.5px solid var(--pen);color:var(--pen);cursor:pointer;
   font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;
@@ -603,6 +612,127 @@ quadro&&quadro.querySelectorAll('video').forEach(v=>{ v.muted=true; v.pause();
   const a=v.closest('a');
   a.addEventListener('pointerenter',()=>v.play().catch(()=>{}));
   a.addEventListener('pointerleave',()=>v.pause()); });
+
+/* ---- modo edição: mover, girar, redimensionar, ordenar, apagar ---- */
+const POS_KEY='mural-hi-v1';
+const SEL='.pile .ph, .pile .stk, .pile .fx, .pile .scrib, .pile .mark';
+const PECAS=()=>document.querySelectorAll(SEL);
+const GENERICAS=new Set(['ph','stk','fx','scrib','mark','sepia','photo','vid']);
+const clsOf=el=>[...el.classList].find(c=>!GENERICAS.has(c));
+const est={};                       // classe -> {l,t,r,sc,z,del}
+function lerCSS(el){
+  const cs=getComputedStyle(el), m=cs.transform;
+  let r=0,sc=1;
+  if(m&&m!=='none'){const n=m.match(/matrix\(([^)]+)\)/);
+    if(n){const [a,b]=n[1].split(',').map(parseFloat);
+      r=Math.round(Math.atan2(b,a)*180/Math.PI*10)/10; sc=Math.round(Math.hypot(a,b)*1000)/1000;}}
+  return {l:parseFloat(cs.left)||0, t:parseFloat(cs.top)||0, r, sc, z:parseInt(cs.zIndex)||0, del:false};
+}
+function aplica(el){const c=clsOf(el), e=est[c]; if(!e)return;
+  el.style.left=e.l+'px'; el.style.top=e.t+'px'; el.style.zIndex=e.z;
+  el.style.transform='rotate('+e.r+'deg) scale('+e.sc+')';
+  el.style.display=e.del?'none':'';}
+function aviso(txt){const b=document.querySelector('#edbar span');if(b)b.textContent=txt;}
+let pendente=null;
+function guarda(){
+  if(!edit) return;            /* nada grava fora do modo de arrastar */
+  try{localStorage.setItem(POS_KEY,JSON.stringify(est));}catch(e){}
+  clearTimeout(pendente);
+  pendente=setTimeout(()=>{
+    fetch('/salvar-hi',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(est)})
+      .then(r=>r.ok?r.json():Promise.reject())
+      .then(()=>aviso('salvo no arquivo ✓'))
+      .catch(()=>aviso('só no navegador — o servidor não respondeu'));
+  },400);
+}
+function aplicaTudo(d){ for(const k in d){ if(est[k]){ Object.assign(est[k],d[k]);
+  const el=document.querySelector('.pile .'+k); if(el) aplica(el); } } }
+PECAS().forEach(el=>{const c=clsOf(el); if(c) est[c]=lerCSS(el);});
+setTimeout(()=>{ PECAS().forEach(el=>{const c=clsOf(el); if(c) est[c]=lerCSS(el);}); },900);
+
+let sel=null;
+function seleciona(el){
+  document.querySelectorAll('.sel').forEach(x=>x.classList.remove('sel'));
+  sel=el; if(el) el.classList.add('sel');
+  const b=document.querySelector('#edbar span'); if(b) b.textContent = el? clsOf(el) : '';
+}
+function mexe(f){ if(!sel) return; const c=clsOf(sel); f(est[c]); aplica(sel); guarda(); }
+const maior =()=>mexe(e=>e.sc=Math.min(4,Math.round((e.sc*1.08)*1000)/1000));
+const menor =()=>mexe(e=>e.sc=Math.max(.15,Math.round((e.sc/1.08)*1000)/1000));
+const giraE =()=>mexe(e=>e.r=Math.round((e.r-3)*10)/10);
+const giraD =()=>mexe(e=>e.r=Math.round((e.r+3)*10)/10);
+const frente=()=>mexe(e=>e.z=e.z+1);
+const tras  =()=>mexe(e=>e.z=e.z-1);
+let ultimaApagada=null;
+const apaga =()=>{ if(!sel)return; const c=clsOf(sel);
+  if(!confirm('Apagar '+c+' do mural?'))return;
+  ultimaApagada=c; mexe(e=>e.del=true); seleciona(null); aviso('apagada — ctrl+z traz de volta'); };
+const desapaga=()=>{ if(!ultimaApagada)return; const c=ultimaApagada;
+  est[c].del=false; const el=document.querySelector('.pile .'+c);
+  if(el){aplica(el); seleciona(el);} ultimaApagada=null; guarda(); aviso('de volta'); };
+
+function escala(){const m=getComputedStyle(document.querySelector('.pile')).transform;
+  if(!m||m==='none')return 1;const v=m.match(/matrix\(([^,]+)/);return v?parseFloat(v[1]):1;}
+let arrasto=null;
+PECAS().forEach(el=>el.addEventListener('pointerdown',ev=>{
+  if(!edit)return; ev.preventDefault(); ev.stopPropagation(); seleciona(el);
+  const c=clsOf(el); arrasto={el,x:ev.clientX,y:ev.clientY,l:est[c].l,t:est[c].t,s:escala()};
+  try{el.setPointerCapture(ev.pointerId)}catch(_){}
+}));
+document.addEventListener('pointermove',ev=>{ if(!arrasto)return;
+  const c=clsOf(arrasto.el);
+  est[c].l=Math.round(arrasto.l+(ev.clientX-arrasto.x)/arrasto.s);
+  est[c].t=Math.round(arrasto.t+(ev.clientY-arrasto.y)/arrasto.s);
+  aplica(arrasto.el);});
+document.addEventListener('pointerup',()=>{ if(!arrasto)return; arrasto=null; guarda(); ajustaMural();});
+
+function copia(){const L=[];PECAS().forEach(el=>{const c=clsOf(el),e=est[c];if(!c)return;
+  L.push(e.del ? '.'+c+'  APAGADA'
+    : '.'+c+'  left:'+e.l+'px  top:'+e.t+'px  rotate:'+e.r+'deg  scale:'+e.sc+'  z:'+e.z);});
+  const t=L.join('\n');
+  (navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject())
+   .then(()=>{const b=document.querySelector('#edbar span');if(b)b.textContent='copiado!';},
+         ()=>prompt('Copie isto e me mande:',t));}
+
+function modo(on){edit=on;document.body.classList.toggle('editing',on); if(!on) seleciona(null);
+  let bar=document.getElementById('edbar');
+  if(on&&!bar){bar=document.createElement('div');bar.id='edbar';
+    bar.innerHTML='<b>arrastar</b><span></span>'
+      +'<button id="eb-">–</button><button id="eb+">+</button>'
+      +'<button id="ebl">↺</button><button id="ebr">↻</button>'
+      +'<button id="ebf">frente</button><button id="ebb">trás</button>'
+      +'<button id="ebd">apagar</button>'
+      +'<button id="eds">salvar</button>'
+      +'<button id="edc">copiar</button><button id="edr">padrão</button><button id="edx">sair</button>';
+    document.body.appendChild(bar);
+    const on_=(id,f)=>document.getElementById(id).onclick=f;
+    on_('eb-',menor);on_('eb+',maior);on_('ebl',giraE);on_('ebr',giraD);
+    on_('ebf',frente);on_('ebb',tras);on_('ebd',apaga);on_('edc',copia);on_('eds',()=>{aviso('salvando…');guarda();});
+    on_('edr',()=>{ if(!confirm('Voltar o mural ao padrão e perder o arranjo salvo?'))return;
+      localStorage.removeItem(POS_KEY);
+      fetch('/salvar-hi',{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'})
+        .catch(()=>{}).then(()=>location.reload());});
+    on_('edx',()=>modo(false));}
+  if(bar)bar.style.display=on?'flex':'none';}
+
+document.addEventListener('keydown',ev=>{
+  if(ev.target!==document.body) return;
+  if(ev.key==='e'||ev.key==='E'){modo(!edit);return;}
+  if(edit&&(ev.metaKey||ev.ctrlKey)&&ev.key==='z'){desapaga();ev.preventDefault();return;}
+  if(!edit||!sel) return;
+  const k=ev.key, c=clsOf(sel);
+  if(k==='+'||k==='='){maior();ev.preventDefault();}
+  else if(k==='-'||k==='_'){menor();ev.preventDefault();}
+  else if(k==='['){giraE();}
+  else if(k===']'){giraD();}
+  else if(k==='.'){frente();}
+  else if(k===','){tras();}
+  else if(k==='Backspace'||k==='Delete'){apaga();ev.preventDefault();}
+  else if(k.startsWith('Arrow')){const d=ev.shiftKey?10:1;
+    mexe(e=>{if(k==='ArrowLeft')e.l-=d;if(k==='ArrowRight')e.l+=d;if(k==='ArrowUp')e.t-=d;if(k==='ArrowDown')e.t+=d;});
+    ev.preventDefault();}
+});
+if(location.search.indexOf('edit')>-1) modo(true);
 
 document.fonts.ready.then(roda);
 </script>
