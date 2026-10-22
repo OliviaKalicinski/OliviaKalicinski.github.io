@@ -19,7 +19,7 @@
 html,body{height:100%}
 body{margin:0;background:#fff;color:var(--ink);font-family:var(--sans);
   display:flex;align-items:flex-start;justify-content:center;overflow-y:auto;
-  padding:48px 0 110px}   /* o texto cresceu: rola quando a tela é baixa */   /* a barra da bancada não cobre o texto */
+  padding:48px 0 56px}   /* o texto cresceu: rola quando a tela é baixa */   /* a barra da bancada não cobre o texto */
 
 .palco{margin:auto;padding:0 22px;max-width:94vw;display:flex;flex-direction:column;
   align-items:flex-start;gap:clamp(22px,4vh,46px)}
@@ -99,113 +99,27 @@ body.mono .cur{width:.55em;height:1em;margin-left:.06em;vertical-align:-.1em}
 
 </div>
 
-<div class="mesa">
-  <button id="play">&#9654; repetir</button>
-  <span class="grupo">
-    <button id="m-tw">typewriter</button>
-    <button id="m-mask" class="ativo">máscara</button>
-  </span>
-  <span class="grupo">
-    <button id="f-sans" class="ativo">sans</button>
-    <button id="f-mono">mono</button>
-  </span>
-  <span class="ctrl" id="c-vel"><label for="vel">letra</label>
-    <input type="range" id="vel" min="20" max="220" step="5" value="75">
-    <output id="vel-v">75ms</output></span>
-  <span class="ctrl" id="c-pausa"><label for="pausa">vírgula</label>
-    <input type="range" id="pausa" min="0" max="800" step="20" value="340">
-    <output id="pausa-v">340ms</output></span>
-  <span class="ctrl" id="c-dur" hidden><label for="dur">dura</label>
-    <input type="range" id="dur" min="200" max="1600" step="20" value="620">
-    <output id="dur-v">620ms</output></span>
-  <span class="ctrl" id="c-gap" hidden><label for="gap">intervalo</label>
-    <input type="range" id="gap" min="0" max="500" step="10" value="120">
-    <output id="gap-v">120ms</output></span>
-  <span class="dica">barra de espaço repete</span>
-</div>
+
 
 <script>
-const TEXTO="Hi, I'm Olivia";
-const NEGRITO=7;                       /* "Olivia" começa aqui */
-const raiz=document.documentElement, fala=document.getElementById('fala');
-const lento=matchMedia('(prefers-reduced-motion:reduce)').matches;
-let modo='mask', relogio=null;
-
-function mostraControles(){
-  document.getElementById('c-vel').hidden   = modo!=='tw';
-  document.getElementById('c-pausa').hidden = modo!=='tw';
-  document.getElementById('c-dur').hidden   = modo!=='mask';
-  document.getElementById('c-gap').hidden   = modo!=='mask';
-}
+/* o título sobe de trás da máscara; o parágrafo entra logo depois */
+const raiz=document.documentElement;
+const fala=document.getElementById('fala');
+const MASCARA='<span class="pal"><span>Hi,</span></span>'
+  +'<span class="pal"><span>I\'m</span></span>'
+  +'<span class="pal"><span><em>Olivia</em></span></span>'
+  +'<span class="cur pisca"></span>';
 
 function entraBio(){
   const c=document.getElementById('biomask');
   c.classList.remove('vem'); void c.offsetWidth; c.classList.add('vem');
 }
-
-function typewriter(){
-  clearTimeout(relogio);
-  document.body.classList.add('tw'); document.body.classList.remove('mask');
-  const vel=+document.getElementById('vel').value;
-  const pausaVirgula=+document.getElementById('pausa').value;
-  fala.innerHTML='';
-  const letras=[...TEXTO].map((c,i)=>{
-    const s=document.createElement('span');
-    s.className='letra'; s.textContent = c===' ' ? ' ' : c;
-    if(i>=NEGRITO) s.style.fontWeight='500';
-    fala.appendChild(s); return s;
-  });
-  const cur=document.createElement('span');
-  cur.className='cur pisca'; fala.appendChild(cur);
-  if(lento){ letras.forEach(l=>l.classList.add('vis')); entraBio(); return; }
-  fala.insertBefore(cur, letras[0]);      /* o cursor anda junto com a digitação */
-  let i=0;
-  (function bate(){
-    if(i>=letras.length){ fala.appendChild(cur); entraBio(); return; }
-    letras[i].classList.add('vis');
-    letras[i].after(cur);
-    const c=TEXTO[i]; i++;
-    const jitter = vel*0.35*(Math.random()-0.5);     /* mão humana, não metrônomo */
-    const espera = (c===',' ? pausaVirgula : (c===' ' ? vel*1.4 : vel)) + jitter;
-    relogio=setTimeout(bate, Math.max(16,espera));
-  })();
+function roda(){
+  document.body.classList.add('mask');
+  fala.innerHTML=MASCARA;
+  const n=p=>parseFloat(getComputedStyle(raiz).getPropertyValue(p));
+  const atraso=(n('--inicio')+n('--gap')*2+n('--dur'))*1000*0.85;
+  setTimeout(entraBio, atraso);
 }
-
-function mascara(){
-  clearTimeout(relogio);
-  document.body.classList.add('mask'); document.body.classList.remove('tw');
-  fala.innerHTML='<span class="pal"><span>Hi,</span></span>'
-    +'<span class="pal"><span>I\'m</span></span>'
-    +'<span class="pal"><span><em>Olivia</em></span></span>'
-    +'<span class="cur pisca"></span>';
-  const atraso=(parseFloat(getComputedStyle(raiz).getPropertyValue('--inicio'))
-    + parseFloat(getComputedStyle(raiz).getPropertyValue('--gap'))*2
-    + parseFloat(getComputedStyle(raiz).getPropertyValue('--dur')))*1000;
-  setTimeout(entraBio, atraso*0.85);
-}
-
-function roda(){ mostraControles(); modo==='tw' ? typewriter() : mascara(); }
-
-document.getElementById('play').onclick=roda;
-addEventListener('keydown',e=>{ if(e.code==='Space'){e.preventDefault();roda();} });
-
-function botao(id, f){ document.getElementById(id).onclick=f; }
-function marca(a,b){ document.getElementById(a).classList.add('ativo');
-                     document.getElementById(b).classList.remove('ativo'); }
-botao('m-tw',   ()=>{modo='tw';   marca('m-tw','m-mask'); roda();});
-botao('m-mask', ()=>{modo='mask'; marca('m-mask','m-tw'); roda();});
-botao('f-sans', ()=>{document.body.classList.remove('mono'); marca('f-sans','f-mono'); roda();});
-botao('f-mono', ()=>{document.body.classList.add('mono');    marca('f-mono','f-sans'); roda();});
-
-[['vel','ms'],['pausa','ms']].forEach(([id,suf])=>{
-  const r=document.getElementById(id), o=document.getElementById(id+'-v');
-  r.addEventListener('input',()=>{ o.textContent=r.value+suf; roda(); });
-});
-[['dur','--dur','ms'],['gap','--gap','ms']].forEach(([id,prop,suf])=>{
-  const r=document.getElementById(id), o=document.getElementById(id+'-v');
-  r.addEventListener('input',()=>{ o.textContent=r.value+suf;
-    raiz.style.setProperty(prop,(r.value/1000)+'s'); roda(); });
-});
-
 document.fonts.ready.then(roda);
 </script>
