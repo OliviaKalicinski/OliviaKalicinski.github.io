@@ -26,11 +26,17 @@ body{margin:0;background:#fff;color:var(--ink);font-family:var(--sans);
 .bio p{margin:0 0 .85em}
 .bio p:last-child{margin-bottom:0}
 .bio{margin:0;max-width:34em;text-align:justify;hyphens:auto;font-weight:300;
-  font-size:clamp(15px,1.9vw,19px);line-height:1.62;letter-spacing:-.005em;color:#3a3a38;
-  opacity:0;transform:translateY(100%)}
-.biomask{overflow:hidden;max-width:34em}
-.biomask.vem .bio{animation:bioSobe .78s cubic-bezier(.16,1,.3,1) forwards}
-@keyframes bioSobe{to{opacity:1;transform:none}}
+  font-size:clamp(15px,1.9vw,19px);line-height:1.62;letter-spacing:-.005em;color:#3a3a38}
+.bio strong{font-weight:500;color:var(--ink)}
+.bio em{font-style:italic;font-weight:inherit}
+.frase{margin:0;max-width:34em;font-weight:500;color:var(--ink);
+  font-size:clamp(18px,2.5vw,25px);line-height:1.3;letter-spacing:-.02em}
+.convite{margin:0;max-width:34em;font-weight:300;color:var(--pen);
+  font-size:clamp(15px,1.9vw,19px);line-height:1.6}
+.bloco{overflow:hidden;max-width:34em}
+.bloco>*{opacity:0;transform:translateY(100%)}
+.bloco.vem>*{animation:sobeBloco .78s cubic-bezier(.16,1,.3,1) forwards}
+@keyframes sobeBloco{to{opacity:1;transform:none}}
 .bio strong{font-weight:500;color:var(--ink)}
 .bio em{font-style:italic;font-weight:inherit}
 .bio .convite{margin-top:1.6em;text-align:left;color:var(--pen)}
@@ -78,10 +84,10 @@ body.mono .cur{width:.55em;height:1em;margin-left:.06em;vertical-align:-.1em}
 
 <div class="palco">
   <p class="fala" id="fala" aria-label="Hi, I'm Olivia"></p>
-  <div class="biomask" id="biomask"><div class="bio" id="bio">
-    <p><strong>This is not a normal growth profile.</strong></p>
+  <div class="bloco" id="b1"><p class="frase">This is not a normal growth profile.</p></div>
+  <div class="bloco" id="b2"><div class="bio">
     <p><strong>I lead marketing for a dog food made from insects</strong> — Comida de Dragão,
-    produced in the first insect biofactory in Rio de Janeiro, since launch.
+    produced in the first insect biofactory in Rio de Janeiro, and have been there since launch.
     <strong>The category does not exist yet</strong>: no competitor to copy, no benchmark to
     beat, nobody out there searching for the product.</p>
     <p><strong>I am also an artist, and I connect concept and technique until it means
@@ -90,15 +96,15 @@ body.mono .cur{width:.55em;height:1em;margin-left:.06em;vertical-align:-.1em}
     <p>For a company that sells online, marketing is the engine. <strong>I drive growth and
     brand, and I write the code they run on</strong>: the landing pages, the dashboards, the
     agents that read the numbers each morning. A decision never waits in a queue.</p>
-    <p class="convite">If any of that made you curious, keep going.</p>
   </div></div>
+  <div class="bloco" id="b3"><p class="convite">If any of that made you curious, keep going.</p></div>
 
 </div>
 
 
 
 <script>
-/* o título sobe de trás da máscara; o parágrafo entra logo depois */
+/* quatro tempos, cada um com a sua máscara */
 const raiz=document.documentElement;
 const fala=document.getElementById('fala');
 const MASCARA='<span class="pal"><span>Hi,</span></span>'
@@ -106,16 +112,16 @@ const MASCARA='<span class="pal"><span>Hi,</span></span>'
   +'<span class="pal"><span><em>Olivia</em></span></span>'
   +'<span class="cur pisca"></span>';
 
-function entraBio(){
-  const c=document.getElementById('biomask');
-  c.classList.remove('vem'); void c.offsetWidth; c.classList.add('vem');
-}
 function roda(){
   document.body.classList.add('mask');
   fala.innerHTML=MASCARA;
+  ['b1','b2','b3'].forEach(id=>document.getElementById(id).classList.remove('vem'));
   const n=p=>parseFloat(getComputedStyle(raiz).getPropertyValue(p));
-  const atraso=(n('--inicio')+n('--gap')*2+n('--dur'))*1000*0.85;
-  setTimeout(entraBio, atraso);
+  const tituloAcaba=(n('--inicio')+n('--gap')*2+n('--dur'))*1000;
+  const passo=520;
+  ['b1','b2','b3'].forEach((id,i)=>{
+    setTimeout(()=>document.getElementById(id).classList.add('vem'), tituloAcaba*0.85 + i*passo);
+  });
 }
 document.fonts.ready.then(roda);
 </script>
