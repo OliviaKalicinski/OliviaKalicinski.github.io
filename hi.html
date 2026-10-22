@@ -17,9 +17,22 @@
 }
 *{box-sizing:border-box}
 html,body{height:100%}
-body{margin:0;background:#fff;color:var(--ink);font-family:var(--sans);
-  display:flex;align-items:flex-start;justify-content:center;overflow-y:auto;
-  padding:48px 0 56px}   /* o texto cresceu: rola quando a tela é baixa */   /* a barra da bancada não cobre o texto */
+body{margin:0;background:#fff;color:var(--ink);font-family:var(--sans);overflow:hidden}
+
+/* ---- duas telas lado a lado; a câmera corre para a esquerda ---- */
+.trilho{display:flex;width:200vw;height:100%;
+  transition:transform 1s cubic-bezier(.76,0,.24,1)}
+.trilho.dois{transform:translateX(-100vw)}
+.tela{flex:0 0 100vw;height:100%;overflow-y:auto;overflow-x:hidden;
+  display:flex;align-items:flex-start;justify-content:center;padding:48px 0 56px}
+.voltar{position:fixed;left:18px;top:16px;z-index:50;display:none;
+  background:#fff;border:1.5px solid var(--pen);color:var(--pen);cursor:pointer;
+  font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;
+  padding:5px 10px;line-height:1}
+.voltar.on{display:block}
+.voltar:hover{background:var(--pen);color:#fff}
+.convite{cursor:pointer}
+.convite:hover{text-decoration:underline}
 
 .palco{margin:auto;padding:0 22px;max-width:94vw;display:flex;flex-direction:column;
   align-items:flex-start;gap:clamp(22px,4vh,46px)}
@@ -82,6 +95,9 @@ body.mono .cur{width:.55em;height:1em;margin-left:.06em;vertical-align:-.1em}
 @media(max-width:760px){.mesa .dica{display:none}.mesa{gap:10px;font-size:10px}}
 </style>
 
+<button class="voltar" id="voltar">&larr; voltar</button>
+<div class="trilho" id="trilho">
+<section class="tela">
 <div class="palco">
   <p class="fala" id="fala" aria-label="Hi, I'm Olivia"></p>
   <div class="bloco" id="b1"><p class="frase">I'm doing marketing for something that
@@ -100,6 +116,12 @@ body.mono .cur{width:.55em;height:1em;margin-left:.06em;vertical-align:-.1em}
     agents that read the numbers each morning. A decision never waits in a queue.</p>
   </div></div>
   <div class="bloco" id="b3"><p class="convite">If any of that made you curious, keep going.</p></div>
+</div>
+</section>
+<section class="tela" id="tela2">
+  <div class="palco" id="palco2"></div>
+</section>
+</div>
 
 </div>
 
@@ -125,5 +147,16 @@ function roda(){
     setTimeout(()=>document.getElementById(id).classList.add('vem'), tituloAcaba*0.85 + i*passo);
   });
 }
+/* a câmera corre para a esquerda */
+const trilho=document.getElementById('trilho'), voltar=document.getElementById('voltar');
+let tela=1;
+function vai(n){ tela=n; trilho.classList.toggle('dois', n===2); voltar.classList.toggle('on', n===2); }
+document.querySelector('.convite').addEventListener('click',()=>vai(2));
+voltar.addEventListener('click',()=>vai(1));
+addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight') vai(2);
+  if(e.key==='ArrowLeft'||e.key==='Escape') vai(1);
+});
+
 document.fonts.ready.then(roda);
 </script>
