@@ -227,18 +227,35 @@ body.editing .stk{outline:1px dashed rgba(34,51,204,.3)}
 body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
   background:url("img/papel-v2.jpg") center/cover no-repeat;opacity:.20}
 
-/* ---- o rastro: o que esta visita deixou ---- */
-.rastro{position:fixed;left:0;right:0;bottom:0;z-index:300;padding:10px 20px 12px;
-  background:linear-gradient(to top, rgba(253,252,250,.96), rgba(253,252,250,0));
-  font-size:12.5px;line-height:1.5;color:#55504a;pointer-events:none;
-  opacity:0;transition:opacity .7s ease}
-.rastro.on{opacity:1}
-.rastro .linha{max-width:760px;margin:0 auto;text-align:center}
-.rastro b{font-weight:500;color:#1b1816}
-.rastro .nota{display:block;margin-top:3px;font-size:11.5px;color:#8c867d}
-.rastro .nota a{color:inherit;text-decoration:underline;pointer-events:auto}
-body.editing .rastro{display:none}
-@media(max-width:560px){.rastro{font-size:11.5px;padding:8px 14px 10px}}
+/* ---- o rastro: uma janelinha de terminal sobre a colagem ---- */
+.term{--az:#1f1fe8;position:fixed;right:20px;bottom:20px;z-index:340;width:330px;
+  background:#fff;border:1.5px solid var(--az);color:var(--az);
+  font-family:"IBM Plex Mono",ui-monospace,"SF Mono",Menlo,monospace;
+  font-size:11.5px;line-height:1.55;letter-spacing:.055em;text-transform:uppercase;
+  display:none}
+.term.on{display:block}
+.term .barra{display:flex;align-items:center;justify-content:space-between;
+  background:var(--az);color:#fff;padding:3px 6px 4px;font-size:11px;letter-spacing:.1em}
+.term .barra button{all:unset;cursor:pointer;padding:0 3px;line-height:1}
+.term .corpo{padding:9px 10px 11px}
+.term .reg{background:var(--az);color:#fff;padding:0 3px}
+.term .fio{overflow:hidden;white-space:nowrap;opacity:.9;margin:7px 0 6px;height:1.1em}
+.term .lin{margin:0 0 2px}
+.term .leve{text-transform:none;letter-spacing:.02em;font-size:10.5px;opacity:.72;margin-top:8px}
+.term a{color:inherit;text-decoration:underline}
+.term .cur{display:inline-block;width:.55em;height:1em;background:var(--az);
+  vertical-align:-2px;animation:pisca 1.1s steps(1) infinite}
+@keyframes pisca{0%,50%{opacity:1}51%,100%{opacity:0}}
+.abrir{position:fixed;right:20px;bottom:20px;z-index:340;display:none;
+  background:#fff;border:1.5px solid #1f1fe8;color:#1f1fe8;cursor:pointer;
+  font-family:"IBM Plex Mono",ui-monospace,Menlo,monospace;font-size:11px;
+  letter-spacing:.12em;text-transform:uppercase;padding:5px 9px}
+.abrir.on{display:block}
+.abrir:hover{background:#1f1fe8;color:#fff}
+body.editing .term,body.editing .abrir{display:none}
+@media(max-width:560px){
+  .term{left:12px;right:12px;bottom:12px;width:auto;font-size:11px}
+  .abrir{right:12px;bottom:12px}}
 .off{display:none}
 nav .circled{margin-left:auto}
 .p9 {left:516px;top:418px;width:164px;height:194px;transform:rotate(-2.0deg);z-index:9}
@@ -419,7 +436,12 @@ footer{padding:86px 0 90px;max-width:980px;margin:0 auto}
 
 </div>
 
-<div class="rastro" id="rastro"><p class="linha"><span id="rastro-txt"></span><span class="nota">Guardo origem, horário, o que foi aberto e o tempo aqui. Nada de IP, nada que identifique você. <a href="#" id="rastro-off">não quero aparecer</a></span></p></div>
+<button class="abrir" id="rastro-abrir">▮ rastro</button>
+<div class="term" id="rastro">
+  <div class="barra"><span>rastro.txt</span><button id="rastro-x" aria-label="fechar">×</button></div>
+  <div class="corpo" id="rastro-txt"></div>
+</div>
+
 <div class="ar" id="ar"><button class="arx" id="arx" aria-label="fechar">&times;</button><div class="arin">
 <p class="kick">artist statement</p>
 <h2>Clay fired in open pits,<br>with <em>electronic waste</em> inside.</h2>
@@ -624,8 +646,8 @@ function ajusta(){
   const bw=x1-x0, bh=y1-y0;
   const topo=(document.querySelector('nav')||{offsetHeight:70}).offsetHeight+24;
   const D=document.documentElement;
-  const rod=(document.getElementById('rastro')||{offsetHeight:0}).offsetHeight||0;
-  const lw=Math.max(D.clientWidth-56,200), lh=Math.max(D.clientHeight-topo-rod-24,200);
+  /* a janelinha flutua por cima, como janela; não tira espaço do mural */
+  const lw=Math.max(D.clientWidth-56,200), lh=Math.max(D.clientHeight-topo-40,200);
   const k=Math.min(lw/bw, lh/bh, 1.5);
   pile.style.transform='translate('+(-x0*k)+'px,'+(-y0*k)+'px) scale('+k+')';
   stage.style.height=(bh*k)+'px';
@@ -646,19 +668,34 @@ if(window.ResizeObserver) new ResizeObserver(reajusta).observe(document.document
   const caixa=document.getElementById('rastro'), txt=document.getElementById('rastro-txt');
   if(!caixa) return;
   if(location.hostname==='localhost'&&location.search.indexOf('rastro')<0) {}
-  const off=document.getElementById('rastro-off');
+  const janela=caixa, botao=document.getElementById('rastro-abrir');
+  const FIO='*'.repeat(60), FIO2='/'.repeat(60);
+  function mostra(){janela.classList.add('on');botao.classList.remove('on');
+    try{sessionStorage.setItem('rastro-janela','1')}catch(_){}}
+  function esconde(){janela.classList.remove('on');botao.classList.add('on');
+    try{sessionStorage.setItem('rastro-janela','0')}catch(_){}}
+  document.getElementById('rastro-x').onclick=esconde;
+  botao.onclick=mostra;
+
   let recusou=false; try{recusou=localStorage.getItem('rastro-nao')==='1';}catch(e){}
   function ligar(){ try{localStorage.removeItem('rastro-nao');}catch(_){} location.reload(); }
-  off.onclick=e=>{e.preventDefault();
+  function desliga(){
     if(!confirm('Desligar o rastro? Nada mais é registrado nesta visita.'))return;
     try{localStorage.setItem('rastro-nao','1');}catch(_){}
-    clearInterval(relogio); id=null; desligado();};
+    clearInterval(relogio); id=null; desligado();
+  }
+  function liga(){ ligar(); }
+  function pinta(html){
+    txt.innerHTML=html;
+    const d=txt.querySelector('#r-off'); if(d) d.onclick=e=>{e.preventDefault();desliga();};
+    const l=txt.querySelector('#r-on');  if(l) l.onclick=e=>{e.preventDefault();liga();};
+  }
   function desligado(){
-    txt.innerHTML='O rastro está desligado.';
-    caixa.querySelector('.nota').innerHTML='Nada está sendo registrado. '
-      +'<a href="#" id="rastro-on">ligar de novo</a>';
-    caixa.classList.add('on');
-    document.getElementById('rastro-on').onclick=ev=>{ev.preventDefault();ligar();};
+    pinta('<p class="lin"><span class="reg">desligado</span></p>'
+      +'<div class="fio">'+FIO+'</div>'
+      +'<p class="lin">nada está sendo registrado.</p>'
+      +'<p class="leve">Mudou de ideia? <a href="#" id="r-on">ligar de novo</a></p>');
+    mostra();
   }
   if(recusou){ desligado(); return; }
 
@@ -686,23 +723,33 @@ if(window.ResizeObserver) new ResizeObserver(reajusta).observe(document.document
   function tempo(){ const s=Math.round((Date.now()-comecou)/1000);
     return s<60 ? s+' segundos' : Math.floor(s/60)+'m'+String(s%60).padStart(2,'0'); }
   function escreve(){
-    if(!numero) return;
+    if(!numero && !total) return;
     const o=bonito(deOndeVeio());
-    let f='Você é a <b>'+ordinal(total)+' pessoa</b> que abriu esta página';
-    f += (o==='direto') ? ', e chegou direto pelo endereço' : ', e veio <b>'+(o==='um e-mail'?o:'do '+o)+'</b>';
-    f += '. Está aqui há <b>'+tempo()+'</b>';
-    if(abertas.length) f += ' e abriu <b>'+abertas.slice(-3).join('</b>, <b>')+'</b>';
-    f += '.';
-    if(total<30){ const v = total===1 ? 'É 1 visita' : 'São '+total+' visitas';
-      f += ' <span class="nota" style="display:inline">'+v+' ao todo — pouco para concluir qualquer coisa, por isso te mostro o dado cru e não uma média.</span>'; }
-    txt.innerHTML=f;
+    const de = (o==='direto') ? 'direto pelo endereço' : (o==='um e-mail' ? 'um e-mail' : o);
+    let h='';
+    h+='<p class="lin"><span class="reg">você</span> &nbsp;'+ordinal(total)+' pessoa aqui</p>';
+    h+='<p class="lin">entrou por &nbsp;'+de+'</p>';
+    h+='<p class="lin">está aqui há &nbsp;'+tempo()+'<span class="cur"></span></p>';
+    h+='<div class="fio">'+FIO2+'</div>';
+    if(abertas.length){
+      h+='<p class="lin"><span class="reg">abriu</span></p>';
+      abertas.slice(-4).forEach(a=>{ h+='<p class="lin">&gt; '+a+'</p>'; });
+    }else{
+      h+='<p class="lin">ainda não abriu nada</p>';
+    }
+    h+='<div class="fio">'+FIO+'</div>';
+    h+='<p class="lin"><span class="reg">total</span> &nbsp;'+total+(total===1?' visita':' visitas')+'</p>';
+    if(total<30) h+='<p class="leve">É pouco para concluir qualquer coisa — por isso aqui está o dado cru, e não uma média.</p>';
+    h+='<p class="leve">Origem, horário, o que foi aberto e o tempo. Sem IP, sem nada que identifique você. <a href="#" id="r-off">desligar</a></p>';
+    pinta(h);
   }
   let relogio;
   chamar('rastro_registrar',{p_origem:deOndeVeio(),p_campanha:new URLSearchParams(location.search).get('de'),
     p_dispositivo:movel?'celular':'computador',p_idioma:(navigator.language||'').slice(0,5)})
    .then(r=>{ const l=Array.isArray(r)?r[0]:r; if(!l)return;
      id=l.id; numero=l.numero; total=l.total; escreve();
-     setTimeout(()=>caixa.classList.add('on'),1200);
+     let aberta=true; try{aberta=sessionStorage.getItem('rastro-janela')!=='0';}catch(_){}
+     setTimeout(()=>{ aberta?mostra():esconde(); },1100);
      relogio=setInterval(escreve,1000);
    }).catch(()=>{});
 
