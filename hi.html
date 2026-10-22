@@ -18,10 +18,10 @@
 *{box-sizing:border-box}
 html,body{height:100%}
 body{margin:0;background:#fff;color:var(--ink);font-family:var(--sans);
-  display:flex;align-items:center;justify-content:center;overflow:hidden;
-  padding-bottom:96px}   /* a barra da bancada não cobre o texto */
+  display:flex;align-items:flex-start;justify-content:center;overflow-y:auto;
+  padding:48px 0 110px}   /* o texto cresceu: rola quando a tela é baixa */   /* a barra da bancada não cobre o texto */
 
-.palco{padding:0 22px;max-width:94vw;display:flex;flex-direction:column;
+.palco{margin:auto;padding:0 22px;max-width:94vw;display:flex;flex-direction:column;
   align-items:flex-start;gap:clamp(22px,4vh,46px)}
 .bio p{margin:0 0 .85em}
 .bio p:last-child{margin-bottom:0}
@@ -80,18 +80,21 @@ body.mono .cur{width:.55em;height:1em;margin-left:.06em;vertical-align:-.1em}
   <div class="biomask" id="biomask"><div class="bio" id="bio">
     <p><strong>This is not a normal growth profile.</strong></p>
     <p>I lead all of marketing for a dog food brand that says the word <em>insects</em> out loud,
-    built on the first insect biofactory in Rio de Janeiro. The category does not exist yet: no
-    competitor to copy, no benchmark to beat, nobody out there searching for the product. Demand
-    has to be built before it can be captured, and almost every growth playbook assumes the
-    opposite.</p>
+    built on the first insect biofactory in Rio de Janeiro, launching a category that does not
+    exist yet: no competitor to copy, no benchmark to beat, nobody out there searching for the
+    product. Demand has to be built before it can be captured, and almost every growth playbook
+    assumes the opposite.</p>
     <p>So the work is not only acquisition. The positioning, the voice, the design decisions, what
     the brand stands for and how it earns people — that is mine too. In a category this new, brand
     has to be invented before anything can be optimised.</p>
     <p>It asks for an improbable set of skills, and all of them are in use right now. I own the
-    P&amp;L and I build what I run: the landing pages, the dashboards, the agents that read the
-    numbers each morning — I learned to code because waiting for someone else to build it is how a
-    finding dies. I am also an artist, and that is the part doing the brand work: criticism and art
-    direction, under mentors who train you to look at an image and say precisely why it fails.</p>
+    P&amp;L, and along the way I found myself coding: a startup runs on decision speed, and it
+    turned out I could build the thing — the landing pages, the dashboards, the agents that read
+    the numbers each morning. I am self-taught in most of what I do, and finding that out about
+    myself is part of how I work.</p>
+    <p>The other half comes from a different universe. I am an artist, and what that training
+    gives you is judgement: how to look at a work, say what it is actually doing, and find the way
+    it has to evolve — how concept and making hold together. A brand needs exactly that.</p>
   </div></div>
 
 </div>
