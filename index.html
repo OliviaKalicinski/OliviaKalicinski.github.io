@@ -678,19 +678,17 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape')closeRoom()});
 /* ---- abertura: sai sozinha, ou no clique, ou na tecla ---- */
 (function(){
   const intro=document.getElementById('intro'); if(!intro) return;
-  let vista=false; try{vista=sessionStorage.getItem('intro-vista')==='1';}catch(e){}
-  if((vista&&location.search.indexOf('intro')<0)||location.search.indexOf('edit')>-1){ intro.remove(); return; }
+  if(location.search.indexOf('edit')>-1){ intro.remove(); return; }
   document.body.style.overflow='hidden';
   let saiu=false;
   function sai(){ if(saiu)return; saiu=true;
-    try{sessionStorage.setItem('intro-vista','1');}catch(_){}
     intro.classList.add('sai'); document.body.style.overflow='';
     setTimeout(()=>{intro.remove(); if(window.ajusta)ajusta();},900); }
   const teste=location.search.indexOf('intro')>-1;
   let conta;
   function agenda(){ clearTimeout(conta); if(teste)return;
     const lento=matchMedia('(prefers-reduced-motion:reduce)').matches;
-    conta=setTimeout(sai, lento?600:2600); }
+    conta=setTimeout(sai, lento?600:3600); }
   intro.addEventListener('click',sai);
   addEventListener('keydown',()=>{if(!saiu)sai();},{once:true});
 
