@@ -78,6 +78,44 @@ body.mono .cur{width:.55em;height:1em;margin-left:.06em;vertical-align:-.1em}
 .mask .pal:nth-child(2)>span{animation-delay:calc(var(--inicio) + var(--gap))}
 .mask .pal:nth-child(3)>span{animation-delay:calc(var(--inicio) + var(--gap)*2)}
 
+
+/* ---- o mural ---- */
+#tela2{align-items:center}
+.quadro{position:relative;width:860px;height:640px;transform-origin:top left}
+.ph{position:absolute;background:#fff;padding:8px;box-shadow:0 2px 12px rgba(0,0,0,.14);
+  display:block;text-decoration:none;color:inherit;cursor:pointer;
+  transition:transform .22s ease, box-shadow .22s ease}
+.ph:hover{box-shadow:0 16px 38px rgba(0,0,0,.22);z-index:80}
+.ph img,.ph video{display:block;width:100%;height:100%;object-fit:cover}
+.ph .leg{position:absolute;left:0;right:0;bottom:-1.45em;font-family:var(--mono);
+  font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--soft);
+  opacity:0;transition:opacity .22s ease;white-space:nowrap}
+.ph:hover .leg{opacity:1}
+.stk{position:absolute;display:block}
+.stk img{display:block;width:100%;height:auto}
+.vazio{background:#f4f2ee;box-shadow:none;display:flex;align-items:center;justify-content:center;
+  font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;
+  color:#b3ada3;text-align:center;padding:14px;line-height:1.5}
+
+/* sítio solidão */
+.m1 {left:14px;  top:40px;  width:150px;height:200px;transform:rotate(-5deg);z-index:6}
+.m2 {left:176px; top:18px;  width:150px;height:100px;transform:rotate(4deg); z-index:7}
+.m3 {left:28px;  top:262px; width:160px;height:107px;transform:rotate(3deg); z-index:5}
+/* eu e a arte */
+.m4 {left:352px; top:52px;  width:186px;height:248px;transform:rotate(-1.5deg);z-index:20}
+.m5 {left:346px; top:330px; width:168px;height:112px;transform:rotate(3.5deg);z-index:12}
+.m6 {left:188px; top:150px; width:150px;height:100px;transform:rotate(-7deg);z-index:9}
+/* comida de dragão */
+.m7 {left:566px; top:28px;  width:160px;height:240px;transform:rotate(2.5deg);z-index:10}
+.m8 {left:566px; top:300px; width:100px;height:200px;transform:rotate(-3deg);z-index:11}
+.m9 {left:690px; top:294px; width:150px;height:112px;transform:rotate(4deg); z-index:8}
+/* antes e código */
+.m10{left:36px;  top:400px; width:140px;height:94px; transform:rotate(-4deg);z-index:4}
+.m11{left:184px; top:436px; width:150px;height:100px;transform:rotate(5deg); z-index:6}
+.s1 {left:470px; top:12px;  width:110px;transform:rotate(-8deg);z-index:40}
+.s2 {left:700px; top:454px; width:104px;transform:rotate(6deg); z-index:40}
+.s3 {left:330px; top:470px; width:92px; transform:rotate(-5deg);z-index:40}
+
 /* ---- a bancada ---- */
 .mesa{position:fixed;left:0;right:0;bottom:0;padding:12px 18px;
   display:flex;align-items:center;gap:16px;flex-wrap:wrap;
@@ -118,7 +156,22 @@ body.mono .cur{width:.55em;height:1em;margin-left:.06em;vertical-align:-.1em}
 </div>
 </section>
 <section class="tela" id="tela2">
-  <div class="palco" id="palco2"></div>
+  <div class="quadro" id="quadro">
+    <a class="ph m1" href="#"><img src="img/queijos.jpg" alt="tábua de queijos"><span class="leg">sítio solidão</span></a>
+    <a class="ph m2" href="#"><img src="img/ovelhas.jpg" alt="ovelhas lacaune"><span class="leg">as lacaune</span></a>
+    <a class="ph m3" href="#"><img src="img/queijaria.jpg" alt="mãos na queijaria"><span class="leg">a queijaria</span></a>
+    <a class="ph m4" href="#"><img src="img/retrato.jpg" alt="Olivia"><span class="leg">eu</span></a>
+    <a class="ph m5" href="#"><img src="img/aula.jpg" alt="aula de cerâmica"><span class="leg">cerâmica</span></a>
+    <a class="ph m6" href="#"><img src="img/banana/b1.jpg" alt="série das bananas"><span class="leg">as bananas</span></a>
+    <a class="ph m7" href="#"><img src="img/larva.jpg" alt="larva na mão"><span class="leg">comida de dragão</span></a>
+    <a class="ph m8" href="#"><img src="img/lps/01-alergia.jpg" alt="landing page"><span class="leg">as páginas</span></a>
+    <a class="ph m9" href="#"><video src="img/compilado.mp4" poster="img/compilado-poster.jpg" muted loop playsinline preload="metadata"></video><span class="leg">o compilado</span></a>
+    <a class="ph m10 vazio" href="#">dashboard<br>do sítio</a>
+    <a class="ph m11 vazio" href="#">revelador</a>
+    <span class="stk s1"><img src="img/logo-sticker.svg" alt=""></span>
+    <span class="stk s2"><img src="img/cerebro.png" alt=""></span>
+    <span class="stk s3"><img src="img/notai.png" alt=""></span>
+  </div>
 </section>
 
 
@@ -151,13 +204,41 @@ function roda(){
 /* a câmera corre para a esquerda */
 const trilho=document.getElementById('trilho'), voltar=document.getElementById('voltar');
 let tela=1;
-function vai(n){ tela=n; trilho.classList.toggle('dois', n===2); voltar.classList.toggle('on', n===2); }
+function vai(n){ tela=n; trilho.classList.toggle('dois', n===2); voltar.classList.toggle('on', n===2);
+  if(n===2) setTimeout(ajustaMural,60); }
 document.querySelector('.convite').addEventListener('click',()=>vai(2));
 voltar.addEventListener('click',()=>vai(1));
 addEventListener('keydown',e=>{
   if(e.key==='ArrowRight') vai(2);
   if(e.key==='ArrowLeft'||e.key==='Escape') vai(1);
 });
+
+
+/* o mural cabe sempre na tela */
+const quadro=document.getElementById('quadro');
+function ajustaMural(){
+  if(!quadro) return;
+  quadro.style.transform='none';
+  const base=quadro.getBoundingClientRect();
+  let x0=1e9,y0=1e9,x1=-1e9,y1=-1e9;
+  quadro.querySelectorAll('.ph,.stk').forEach(e=>{
+    const r=e.getBoundingClientRect(); if(!r.width&&!r.height)return;
+    x0=Math.min(x0,r.left-base.left);  y0=Math.min(y0,r.top-base.top);
+    x1=Math.max(x1,r.right-base.left); y1=Math.max(y1,r.bottom-base.top);
+  });
+  if(!isFinite(x0)||x1<=x0) return;
+  const f=18; x0-=f; y0-=f; x1+=f; y1+=f;
+  const bw=x1-x0, bh=y1-y0, D=document.documentElement;
+  const k=Math.min((D.clientWidth-56)/bw,(D.clientHeight-96)/bh,1.3);
+  quadro.style.transform='translate('+(-x0*k)+'px,'+(-y0*k)+'px) scale('+k+')';
+  quadro.style.width=(bw*k)+'px'; quadro.style.height=(bh*k)+'px';
+}
+addEventListener('resize',ajustaMural);
+/* o vídeo só toca com o cursor em cima */
+quadro&&quadro.querySelectorAll('video').forEach(v=>{ v.muted=true; v.pause();
+  const a=v.closest('a');
+  a.addEventListener('pointerenter',()=>v.play().catch(()=>{}));
+  a.addEventListener('pointerleave',()=>v.pause()); });
 
 document.fonts.ready.then(roda);
 </script>
