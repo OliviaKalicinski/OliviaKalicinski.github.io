@@ -58,15 +58,6 @@ body.editing .term,body.editing .abrir{display:none}
   box-shadow:0 3px 14px rgba(0,0,0,.18), 0 1px 2px rgba(0,0,0,.10)}
 .ph.pola img,.ph.pola video{height:100%}
 
-/* ---- material de prancheta: tira de negativo, círculo a caneta, anotação ---- */
-.neg{position:absolute;background:#141414;padding:7px 5px;display:flex;gap:4px;
-  box-shadow:0 3px 12px rgba(0,0,0,.26)}
-.neg::before,.neg::after{content:"";position:absolute;left:5px;right:5px;height:5px;
-  background-image:repeating-linear-gradient(90deg,#f0efe9 0 5px,transparent 5px 11px);
-  opacity:.85}
-.neg::before{top:1px} .neg::after{bottom:1px}
-.neg img{display:block;width:100%;height:100%;object-fit:cover;filter:contrast(1.08)}
-.neg span{display:block;flex:1 1 0;height:100%;overflow:hidden}
 
 .circ{position:absolute;pointer-events:none}
 .circ svg{display:block;width:100%;height:100%;overflow:visible}
@@ -78,9 +69,29 @@ body.editing .term,body.editing .abrir{display:none}
 .nota .seta path{fill:none;stroke:var(--pen);stroke-width:1.8;stroke-linecap:round}
 
 
-.neg1{left:476px;top:556px;width:208px;height:66px;transform:rotate(-3.5deg);z-index:30}
 .circ1{left:652px;top:66px;width:120px;height:150px;transform:rotate(6deg);z-index:62}
 .nota1{left:272px;top:574px;width:180px;transform:rotate(-2deg);z-index:63}
+
+/* ---- folha de contato: tira de 35 mm ---- */
+.filme{position:absolute;background:#e9e7e1;padding:14px 0;
+  box-shadow:0 3px 14px rgba(0,0,0,.20);font-family:var(--mono);color:#15140f}
+.filme .quadros{display:flex;gap:3px;padding:0 3px}
+.filme .q{position:relative;flex:1 1 0;overflow:hidden;background:#cfccc4}
+.filme .q img{display:block;width:100%;height:100%;object-fit:cover;
+  filter:grayscale(1) contrast(1.12) brightness(1.04)}
+.filme .borda{position:absolute;left:0;right:0;height:14px;display:flex;align-items:center;
+  overflow:hidden}
+.filme .borda.cima{top:0} .filme .borda.baixo{bottom:0}
+.filme .furos{position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);height:8px;
+  background-image:repeating-linear-gradient(90deg,#fbfaf7 0 9px,transparent 9px 19px);
+  background-size:19px 8px}
+.filme .marcas{position:relative;display:flex;width:100%;justify-content:space-around;
+  font-size:6.5px;letter-spacing:.06em;mix-blend-mode:multiply;opacity:.88;white-space:nowrap}
+.filme .marcas b{font-weight:700;font-size:8px}
+.filme .marcas i{font-style:normal;opacity:.75}
+
+.fl1{left:470px;top:548px;width:300px;height:104px;transform:rotate(-2.5deg);z-index:30}
+.fl2{left:120px;top:636px;width:300px;height:104px;transform:rotate(1.5deg);z-index:29}
 .voltar{position:fixed;left:18px;top:16px;z-index:50;display:none;
   background:#fff;border:1.5px solid var(--pen);color:var(--pen);cursor:pointer;
   font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;
@@ -563,16 +574,12 @@ body.mono .cur{width:.55em;height:1em;margin-left:.06em;vertical-align:-.1em}
     <svg class="scrib s2" viewBox="0 0 112 104" fill="none" stroke="var(--pen)" stroke-width="2" stroke-linecap="round"><path d="M14 86c-8-12-4-26 8-30 10-3 16 6 11 14-5 8-18 6-21-4-4-13 8-26 24-30"/><path d="M58 32c10-6 22-4 26 5 3 8-5 15-12 12-8-3-7-15 2-19 8-4 18 1 22 9"/><path d="M36 36l12-14"/></svg>
     <svg class="scrib s3" viewBox="0 0 92 58" fill="none" stroke="var(--pen)" stroke-width="2" stroke-linecap="round"><path d="M4 50c14-16 30-28 52-36"/><path d="M48 6c6 0 11 1 16 3"/><path d="M58 20c4-4 6-8 6-11"/></svg>
 
-      <span class="fx neg neg1">
-      <span><img src="img/banana/b1.jpg" alt=""></span>
-      <span><img src="img/banana/b2.jpg" alt=""></span>
-      <span><img src="img/banana/b3.jpg" alt=""></span>
-      <span><img src="img/banana/b4.jpg" alt=""></span>
-    </span>
-    <span class="scrib circ circ1"><svg viewBox="0 0 120 150" aria-hidden="true"><path d="M60 7 C98 9 115 42 114 76 C113 112 92 142 58 144 C26 146 6 116 6 78 C6 41 25 8 60 7 C74 6 88 10 97 18"/></svg></span>
+      <span class="scrib circ circ1"><svg viewBox="0 0 120 150" aria-hidden="true"><path d="M60 7 C98 9 115 42 114 76 C113 112 92 142 58 144 C26 146 6 116 6 78 C6 41 25 8 60 7 C74 6 88 10 97 18"/></svg></span>
     <span class="mark nota nota1">a série das bananas — quatro fotos, uma casca
       <svg class="seta" viewBox="0 0 62 30" aria-hidden="true"><path d="M2 4 C20 2 44 8 56 22"/><path d="M48 21 L57 23 L52 15"/></svg>
     </span>
+    <span class="fx filme fl1"><span class="borda cima"><span class="furos"></span><span class="marcas"><b>1</b><i>S-400</i><b>1A</b><i>FUJI</i><b>2</b><i>S-400</i><b>2A</b><i>FUJI</i><b>3</b><i>S-400</i><b>3A</b><i>FUJI</i><b>4</b><i>S-400</i><b>4A</b><i>FUJI</i></span></span><span class="quadros"><span class="q"><img src="img/banana/b1.jpg" alt=""></span><span class="q"><img src="img/banana/b2.jpg" alt=""></span><span class="q"><img src="img/banana/b3.jpg" alt=""></span><span class="q"><img src="img/banana/b4.jpg" alt=""></span></span><span class="borda baixo"><span class="furos"></span><span class="marcas"><b>1</b><i>S-400</i><b>1A</b><i>FUJI</i><b>2</b><i>S-400</i><b>2A</b><i>FUJI</i><b>3</b><i>S-400</i><b>3A</b><i>FUJI</i><b>4</b><i>S-400</i><b>4A</b><i>FUJI</i></span></span></span>
+    <span class="fx filme fl2"><span class="borda cima"><span class="furos"></span><span class="marcas"><b>5</b><i>S-400</i><b>5A</b><i>FUJI</i><b>6</b><i>S-400</i><b>6A</b><i>FUJI</i><b>7</b><i>S-400</i><b>7A</b><i>FUJI</i><b>8</b><i>S-400</i><b>8A</b><i>FUJI</i></span></span><span class="quadros"><span class="q"><img src="img/pf/t-04.jpg" alt=""></span><span class="q"><img src="img/pf/t-07.jpg" alt=""></span><span class="q"><img src="img/pf/t-13.jpg" alt=""></span><span class="q"><img src="img/pf/t-19.jpg" alt=""></span></span><span class="borda baixo"><span class="furos"></span><span class="marcas"><b>5</b><i>S-400</i><b>5A</b><i>FUJI</i><b>6</b><i>S-400</i><b>6A</b><i>FUJI</i><b>7</b><i>S-400</i><b>7A</b><i>FUJI</i><b>8</b><i>S-400</i><b>8A</b><i>FUJI</i></span></span></span>
 </div></div>
 </section>
 
