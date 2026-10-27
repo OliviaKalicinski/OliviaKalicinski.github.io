@@ -1,0 +1,595 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>Olivia Kalicinski</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..100,400..800&family=Fraunces:opsz,wght@9..144,400..700&display=swap" rel="stylesheet">
+<style>
+/* ---- o mural, com as quatro réguas que vieram da Biblioteca ----
+   1. UM tema dominante, e o movimento irradia dele até o menor detalhe
+      (Arnheim, Art and Visual Perception, p.416). Aqui o tema é o retrato.
+   2. SUBTRAÇÃO: "a colagem não existiria sem sua antítese — pôr algo sobre
+      algo de modo a obscurecê-lo" (Hodermarsky, Yale, p.25). Toda peça
+      cobre um pedaço de outra. Nada fica educadamente ao lado.
+   3. POUCO: Braque faz uma colagem com no máximo quatro elementos colados;
+      o Schlotheim de Schwitters usa três variedades de papel e UM elemento
+      colorido (Yale, pp.8 e 20).
+   4. A cor primária UNE, e é preciso saber onde parar (Heller e Anderson,
+      The Graphic Design Idea Book, entrada 27, Paul Rand, pp.67-68).       */
+:root{
+  --osso:#e7e2d5; --tinta:#17150f; --risco:#c6bfab; --fita:#d8cfb4;
+  --superficie:url(img/fundos/branco.jpg);
+  --disp:"Archivo",Impact,sans-serif;
+  --nome:"Fraunces",Georgia,serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--osso);color:var(--tinta);font-family:var(--disp);
+  -webkit-font-smoothing:antialiased}
+
+.parede{min-height:100vh;padding:clamp(14px,2.2vw,34px);
+  display:flex;align-items:center;justify-content:center;
+  background-color:var(--osso);
+  background-image:var(--superficie);
+  background-size:cover;background-position:center}
+
+/* o mural é um campo de proporção fixa: assim a composição não se desmancha */
+.mural{position:relative;width:100%;max-width:1380px;aspect-ratio:16/10;
+  max-height:calc(100vh - clamp(28px,4.4vw,68px))}
+
+/* peça: papel sobre papel. a sombra é o que diz que uma está em cima da outra */
+.p{position:absolute;background:#fbf9f3;padding:.9%;
+  box-shadow:0 1px 0 rgba(23,21,15,.22), 0 14px 22px -16px rgba(23,21,15,.75)}
+.p img{display:block;width:100%;height:auto;filter:contrast(1.03) saturate(.96)}
+.p.porta, .s.porta{cursor:pointer}
+.p.porta, .s.porta{transition:transform 240ms cubic-bezier(.23,1,.32,1),
+                              box-shadow 240ms cubic-bezier(.23,1,.32,1)}
+.p.porta:hover, .p.porta:focus-visible{
+  box-shadow:1px 2px 1px -1px rgba(23,21,15,.2), 10px 18px 26px -10px rgba(23,21,15,.62)}
+.s.porta:hover img, .s.porta:focus-visible img{filter:contrast(1.1)}
+.p.porta:focus-visible, .s.porta:focus-visible{outline:2px solid var(--tinta);outline-offset:4px}
+.p figcaption{font-size:clamp(7px,.62vw,9.5px);letter-spacing:.13em;
+  text-transform:uppercase;color:#837c6b;margin-top:.5em}
+
+/* todas as peças em cor, por decisão dela em 27/10 */
+
+/* a fita: o jeito de prender também é material (Yale, pp.45-46, sobre grampos) */
+.p.fita::before,.p.fita::after{content:"";position:absolute;
+  width:30%;aspect-ratio:420/110;
+  background:var(--fita-img,url(img/fitas/fita-03.png)) center/100% 100% no-repeat;
+  filter:drop-shadow(2px 3px 2px rgba(23,21,15,.3));opacity:.97}
+.p.fita::before{left:-7%;top:-5%;transform:rotate(-27deg)}
+.p.fita::after{right:-7%;bottom:-5%;transform:rotate(-24deg)}
+.p.fita1::after{display:none}
+.retrato{--fita-img:url(img/fitas/fita-01.png)}
+/* no retrato a fita desce pela lateral, para não cair em cima do texto */
+.p.fita.retrato::before{left:-11%;top:16%;transform:rotate(-74deg)}
+.p.fita.retrato::after{right:-11%;bottom:14%;transform:rotate(-74deg)}
+.maos{--fita-img:url(img/fitas/fita-03.png)}
+.ceramica{--fita-img:url(img/fitas/fita-01.png)}
+
+/* a pilha de landing pages: quatro em leque, lidas como uma peça só */
+.pilha{position:absolute;display:block;text-decoration:none;color:inherit}
+.pilha img{position:absolute;left:0;top:0;width:100%;height:auto;
+  background:#fbf9f3;padding:4%;filter:contrast(1.03) saturate(.96);
+  box-shadow:1px 2px 1px -1px rgba(23,21,15,.2), 5px 9px 14px -6px rgba(23,21,15,.5)}
+.pilha img:nth-child(1){transform:rotate(-7deg) translate(-9%,2%)}
+.pilha img:nth-child(2){transform:rotate(-2.5deg) translate(-3%,0)}
+.pilha img:nth-child(3){transform:rotate(2deg) translate(3%,1%)}
+.pilha img:nth-child(4){position:relative;transform:rotate(6deg) translate(9%,0)}
+.pilha b{position:absolute;left:50%;bottom:-13%;transform:translateX(-50%);
+  white-space:nowrap;font-size:clamp(8.5px,.72vw,11px);letter-spacing:.14em;
+  text-transform:uppercase;color:#5d5748;background:var(--osso);padding:2px 7px}
+.pilha:hover img, .pilha:focus-visible img{box-shadow:1px 2px 1px -1px rgba(23,21,15,.2), 10px 18px 26px -10px rgba(23,21,15,.62)}
+
+/* peça recortada no contorno: não é foto emoldurada, é coisa solta na superfície */
+.p.recorte{background:none;padding:0;box-shadow:none}
+.p.recorte img{filter:contrast(1.03) saturate(.96)
+  drop-shadow(3px 5px 4px rgba(23,21,15,.38))}
+.p.recorte.porta:hover, .p.recorte.porta:focus-visible{box-shadow:none}
+.p.recorte.porta:hover img, .p.recorte.porta:focus-visible img{
+  filter:contrast(1.03) saturate(.96) drop-shadow(7px 12px 10px rgba(23,21,15,.5))}
+.p.recorte::before,.p.recorte::after{display:none}
+.p.recorte figcaption{display:none}
+.p.recibo{background:none;padding:0;box-shadow:none}
+.p.recibo img{filter:drop-shadow(3px 5px 5px rgba(23,21,15,.35))}  /* coisa recortada não leva legenda */
+
+/* adesivo e selo não levam papel branco: são a segunda família de material */
+.s{position:absolute}
+.s img{display:block;width:100%;height:auto;
+  filter:drop-shadow(4px 7px 6px rgba(23,21,15,.42))}
+
+.nota{position:absolute;z-index:9;overflow-wrap:break-word;hyphens:auto;
+  font-size:clamp(9.5px,.82vw,13px);line-height:1.5;
+  color:#38342c;background:var(--osso);padding:.4em .6em}
+.nota b{font-weight:700}
+
+h1{position:absolute;margin:0;line-height:1}
+h1 img{display:block;width:100%;height:auto;mix-blend-mode:multiply}
+.cargo{position:absolute;font-family:var(--nome);font-weight:500;
+  font-size:clamp(12px,1.22vw,19px);line-height:1.3;color:#2b2820;margin:0}
+.pe{position:absolute;display:flex;flex-wrap:wrap;gap:4px 16px;
+  font-size:clamp(8.5px,.72vw,11px);letter-spacing:.12em;text-transform:uppercase;
+  color:#55503f;margin:0}
+.pe a{color:inherit;text-decoration:none;border-bottom:1px solid currentColor;padding-bottom:1px}
+
+/* ---- onde cada peça pousa, em % do mural ----
+   o retrato é a artéria; tudo o que vem depois encosta nele ou em quem encostou */
+.nome    {left:4%;  top:3%;   width:30%}
+.cargo   {left:4%;  top:14%;  width:29%}
+.retrato {left:4%;  top:24%;  width:29%;  z-index:5}
+.larva   {left:27%; top:44%;  width:13%;  transform:rotate(6deg);   z-index:9}
+
+/* o sítio, em cima à direita */
+.ovelha  {left:67%; top:13%;  width:33%;  z-index:3}
+.queijo  {left:60%; top:36%;  width:10%;  transform:rotate(7deg);   z-index:8}
+.maos    {left:56%; top:55%;  width:15%;  z-index:5}
+.selo    {left:68%; top:52%;  width:7%;   transform:rotate(-8deg);  z-index:10}
+
+/* o trabalho, no alto do meio */
+.ceramica{left:32%; top:8%;   width:20%;  z-index:4}
+.cabine  {left:55%; top:1%;   width:9%;   transform:rotate(-3deg);  z-index:5}
+.recibo  {left:46%; top:10%;  width:7%;   transform:rotate(3deg);   z-index:7}
+.marca   {left:40%; top:66%;  width:12%;  transform:rotate(-3deg);  z-index:9}
+
+/* o código, embaixo à esquerda */
+.pilha   {left:3%;  top:60%;  width:11%;  z-index:7}
+.cereb   {left:2%;  top:79%;  width:9%;   transform:rotate(-7deg);  z-index:8}
+.maquina {left:17%; top:76%;  width:10%;  transform:rotate(7deg);   z-index:6}
+
+/* a arte, à direita embaixo */
+.arte2   {left:84%; top:50%;  width:13%;  z-index:5}
+.arte1   {left:71%; top:70%;  width:14%;  z-index:5}
+.banana  {left:86%; top:76%;  width:13%;  transform:rotate(-4deg);  z-index:6}
+
+.nota1   {left:2%;  top:91%;  width:19%}
+.nota2   {left:54%; top:88%;  width:26%}
+.nota3   {left:23%; top:91%;  width:21%}
+.pe      {left:44%; top:96.5%;width:42%}
+
+@media (max-aspect-ratio:1/1){
+  /* celular primeiro: a parede inteira cabe numa tela, sem rolagem */
+  .parede{height:100vh;height:100dvh;padding:10px;align-items:stretch;overflow:hidden}
+  .mural{aspect-ratio:auto;width:100%;height:100%;max-height:none}
+  .nome    {left:3%;  top:1%;   width:60%}
+  .cargo   {left:3%;  top:6.5%; width:72%; font-size:12px;line-height:1.32}
+
+  .retrato {left:3%;  top:15%;  width:36%; z-index:5}
+  .ceramica{left:40%; top:15%;  width:32%; z-index:4}
+      .cabine  {left:74%; top:24%;  width:13%; z-index:5}
+  .recibo  {left:88%; top:34%;  width:11%; z-index:7}
+    .cereb   {left:62%; top:27%;  width:18%; z-index:8}
+  .larva   {left:31%; top:27%;  width:18%; z-index:9}
+
+  .ovelha  {left:3%;  top:40%;  width:42%; z-index:3}
+  .queijo  {left:49%; top:42%;  width:19%; z-index:6}
+  .pilha   {left:68%; top:38%;  width:19%; z-index:7}
+  .maos    {left:3%;  top:54%;  width:29%; z-index:5}
+  .selo    {left:30%; top:53%;  width:11%; z-index:10}
+
+  .arte1   {left:42%; top:57%;  width:26%; z-index:5}
+  .banana  {left:71%; top:58%;  width:22%; z-index:6}
+  .arte2   {left:3%;  top:64%;  width:24%; z-index:5}
+  .marca   {left:26%; top:69%;  width:24%; z-index:9}
+  .maquina {left:54%; top:70%;  width:15%; z-index:6}
+
+  /* o texto corrido mora dentro das portas; aqui fica só o essencial */
+  .nota1, .nota3{display:none}
+  .nota2   {left:3%;  top:78%;  width:93%; font-size:11.5px;line-height:1.45}
+  .pe      {left:3%;  top:93%;  width:94%; font-size:10.5px}
+  .p.fita::before,.p.fita::after{height:9px}
+  .p{padding:1.6%}
+  .p figcaption{display:none}
+  .pilha b{font-size:8.5px;bottom:-11%}
+}
+/* o que abre quando se tira uma peça da parede */
+.dentro{position:fixed;inset:0;z-index:20;overflow-y:auto;
+  background:rgba(231,226,213,.95);
+  padding:clamp(22px,5vh,56px) clamp(20px,6vw,56px) clamp(34px,7vh,70px);
+  opacity:0;visibility:hidden;pointer-events:none;
+  transition:opacity 530ms cubic-bezier(.23,1,.32,1), visibility 0s linear 530ms}
+.dentro.no{opacity:1;visibility:visible;pointer-events:auto;
+  transition:opacity 530ms cubic-bezier(.23,1,.32,1), visibility 0s}
+.dentro .folha{max-width:52ch;margin:0 auto}
+.dentro .folha.larga{max-width:72ch}
+.dentro h2{font-family:var(--nome);font-weight:650;line-height:1.02;letter-spacing:-.015em;
+  font-size:clamp(32px,8vw,56px);margin:0 0 clamp(16px,3vh,26px);
+  font-variation-settings:"opsz" 120,"WONK" 1}
+.dentro h3{font-family:var(--disp);font-weight:700;font-stretch:88%;
+  font-size:14px;letter-spacing:.17em;text-transform:uppercase;color:#6b6558;
+  margin:clamp(26px,4.5vh,40px) 0 clamp(10px,1.6vh,14px);
+  padding-bottom:7px;border-bottom:1px solid #cdc6b3}
+.dentro p{font-family:var(--disp);font-weight:400;font-size:clamp(14px,3.6vw,17px);
+  line-height:1.62;color:#3a362d;margin:0 0 1.05em}
+.dentro ul{margin:0 0 1.05em;padding:0;list-style:none}
+.dentro ul li{position:relative;padding-left:1.1em;margin-bottom:.44em;
+  font-family:var(--disp);font-size:clamp(15px,3.6vw,16px);line-height:1.55;color:#3a362d}
+.dentro ul li::before{content:"–";position:absolute;left:0;color:#8b8577}
+.dentro .linha{display:grid;grid-template-columns:9em 1fr;gap:clamp(10px,2.4vw,22px);
+  margin:0 0 clamp(14px,2.4vh,20px)}
+.dentro .quando{font-family:var(--disp);font-size:11.5px;letter-spacing:.09em;
+  text-transform:uppercase;color:#635e52;padding-top:6px;line-height:1.45}
+.dentro .o-que b{display:block;font-family:var(--nome);font-weight:600;
+  font-size:clamp(18px,4.4vw,23px);line-height:1.15;margin-bottom:5px}
+.dentro .o-que p{margin:0}
+.dentro .chapeu{font-family:var(--nome);font-weight:500;font-size:clamp(16px,4vw,20px);
+  line-height:1.42;color:#4b4639;margin:0 0 clamp(10px,2vh,18px)}
+.dentro .fecho{font-family:var(--nome);font-size:clamp(15px,3.8vw,18px);
+  line-height:1.5;color:#4b4639;margin:.2em 0 0}
+.dentro .onde{font-family:var(--disp);font-size:11px;letter-spacing:.12em;
+  text-transform:uppercase;color:#635e52;margin:-2px 0 9px}
+.dentro a{color:inherit;text-decoration:none;border-bottom:1px solid #b0a893}
+.volta{display:inline-flex;align-items:center;gap:8px;background:none;border:0;padding:0;
+  font-family:var(--disp);font-size:11px;letter-spacing:.17em;text-transform:uppercase;
+  color:#5d5748;cursor:pointer;margin-bottom:clamp(20px,4vh,38px)}
+.volta:hover{color:var(--tinta)}
+@media (max-width:620px){ .dentro .linha{grid-template-columns:1fr;gap:4px} }
+</style>
+
+<div class="parede">
+  <div class="mural">
+
+    <h1 class="nome"><img src="nome.png" alt="Olivia Kalicinski"></h1>
+    <p class="cargo">Head of Growth. I own the acquisition P&amp;L of a dog food made
+      from insects — and I write the code it runs on.</p>
+
+    <figure class="p recorte retrato"><img src="img/recorte/retrato.png" alt="Olivia"></figure>
+
+    <figure class="p recorte porta larva" data-porta="trabalho">
+      <img src="img/recorte/larva.png" alt="Larva de mosca soldado negra">
+      <figcaption>the product, before it is food</figcaption>
+    </figure>
+
+    <figure class="p recorte porta ceramica" data-porta="ceramica">
+      <img src="img/recorte/ceramica.png" alt="Olivia dando aula de cerâmica">
+      <figcaption>ceramics, 2021—2025</figcaption>
+    </figure>
+
+    <figure class="p porta ovelha" data-porta="sitio"><img src="img/pecas/06-ovelhas-lacaune-no-aprisco.webp" alt="Ovelhas Lacaune"></figure>
+
+    <figure class="p recorte porta queijo" data-porta="sitio"><img src="img/recorte/queijo.png" alt="Tábua de queijos"></figure>
+
+    <figure class="p fita porta maos" data-porta="sitio">
+      <img style="filter:brightness(1.6) contrast(.97)"
+           src="img/pecas/01-as-maos-na-queijaria-do-sitio-solidao.webp" alt="Mãos na queijaria">
+      <figcaption>sítio solidão, the family dairy</figcaption>
+    </figure>
+
+    <div class="s selo"><img src="img/pecas/08-sticker3.webp" alt="Selo postal do Brasil"></div>
+    <div class="s porta maquina" data-porta="codigo"><img src="img/pecas/07-sticker5.webp" alt="hello world"></div>
+
+
+    <figure class="p recorte porta cereb" data-porta="codigo"><img src="img/cerebro.png" alt="Cérebro"></figure>
+    <figure class="p porta cabine" data-porta="trabalho">
+      <img src="img/recorte/cabine.png" alt="Tira de cabine com as creators no estande"></figure>
+
+    <figure class="p porta recibo" data-porta="trabalho">
+      <img src="img/recorte/recibo-rede.png" alt="Recibo: a rede de creators"></figure>
+
+    <figure class="p porta banana" data-porta="ceramica">
+      <img src="img/banana/b1.jpg" alt="Azulejo com cascas de banana"></figure>
+    <figure class="p porta arte1" data-porta="ceramica">
+      <img src="img/pf/t-10.jpg" alt="Série Data Dump, 2024"><figcaption>data dump, 2024</figcaption></figure>
+    <figure class="p porta arte2" data-porta="ceramica">
+      <img src="img/pf/t-18.jpg" alt="Untitled, 2024"><figcaption>untitled, 2024</figcaption></figure>
+
+    <a class="pilha porta" data-porta="codigo" href="#" onclick="return false">
+      <img src="img/lps/01-alergia.jpg" alt=""><img src="img/lps/08-original.jpg" alt="">
+      <img src="img/lps/21-portal-home.jpg" alt=""><img src="img/lps/42-loja-home.jpg" alt="">
+      <b>58 pages</b></a>
+
+    <div class="s porta marca" data-porta="trabalho"><img src="img/cdd/logo-letra-preta.png" alt="Comida de Dragão"></div>
+
+    <p class="nota nota1"><b>Rio de Janeiro.</b> Open to remote.<br>
+      Twelve years at the wheel before any of this.</p>
+    <p class="nota nota2">No category, no competitor to copy, nobody searching for the
+      product. <b>The demand had to be built, not captured:</b> 2,310 creators, 343 of
+      them veterinarians, across 26 states.</p>
+    <p class="nota nota3"><b>I build what I run.</b> 20+ landing pages in a React/TypeScript
+      portal, dashboards, tracking and scheduled agent automations. Self-taught.</p>
+
+    <footer class="pe">
+      <span><a href="#cv" id="link-cv">CV</a></span>
+      <span><a href="mailto:olivia.kalicinski@gmail.com">olivia.kalicinski@gmail.com</a></span>
+      <span><a href="https://www.linkedin.com/in/olivia-kalicinski/" target="_blank" rel="noopener">LinkedIn</a></span>
+    </footer>
+
+  </div>
+</div>
+
+<article class="dentro" id="dentro" aria-hidden="true">
+  <div class="folha">
+    <button class="volta" id="volta" type="button">← Back to the wall</button>
+    <h2 id="dentro-titulo"></h2>
+    <div id="dentro-texto"></div>
+  </div>
+</article>
+
+  <template id="cv-html">
+    <p class="chapeu">Head of Growth @ Comida de Dragão (Lets Fly). Paid acquisition, lifecycle
+      and CRO for DTC — and I build the stack too: React, SQL, agent automation.</p>
+
+    <h3>Summary</h3>
+    <p>I own the full acquisition P&amp;L of a DTC pet-food brand — paid media, creators, CRM
+      and CRO — and I build the system that runs it.</p>
+    <p>In practice:</p>
+    <ul>
+      <li>I lead a team of four and the company's marketing objective: CAC, checkout close
+        rate, cart recovery, 90-day repurchase and winning creator videos.</li>
+      <li>I found one ad driving 29 of 63 purchases on 13% of spend. Fixing its destination
+        moved the account from 34 to 40 purchases and CPA from R$102 to R$95 in a single week.</li>
+      <li>I scaled Meta spend 45% while ROAS rose from 1.46 to 1.51 and purchases grew from
+        45 to 67.</li>
+      <li>I replaced ROAS with contribution margin per landing page as the budget rule, so
+        every page carries its own CPA ceiling.</li>
+      <li>I build what I run: 20+ landing pages in a React/TypeScript portal (564 commits),
+        dashboards, GA4 tracking and scheduled agent automations.</li>
+    </ul>
+    <p>Before this: six years at a family-owned cheese company, where I created the trade
+      marketing department and led a team of 14, and brand management at L'Oréal (Garnier).</p>
+    <p>From 2021 to 2025 I worked as a visual artist — ceramics, photography and installation,
+      awarded at Festival do Minuto 2024. Not a detour: it is where the eye and the
+      storytelling come from.</p>
+    <p class="fecho">I'm looking for a remote Head of Growth or Growth Lead role with an
+      international team.</p>
+
+    <h3>Experience</h3>
+
+    <div class="linha">
+      <div class="quando">January 2025<br>— present<br>1 yr 10 mos</div>
+      <div class="o-que">
+        <b>Head of Growth · Lets Fly | Alimento que regenera</b>
+        <p class="onde">Rio de Janeiro, Brazil</p>
+        <p>Comida de Dragão is the DTC pet-food brand of Lets Fly, a Brazilian biotech that
+          converts organic waste into insect protein (Black Soldier Fly). I own the brand's
+          full acquisition P&amp;L and build the system that runs it.</p>
+        <ul>
+          <li>Own the company's marketing objective and its five key results: CAC, checkout
+            close rate, cart recovery, 90-day cohort repurchase and winning creator videos</li>
+          <li>Lead a team of four across paid media, creative, creators and CRM, with weekly
+            one-on-ones built on each person's own numbers</li>
+          <li>Run 18 active fronts: Meta, Google and TikTok Ads, creators, Instagram, WhatsApp
+            and email lifecycle, marketplaces, CRO, checkout and pricing</li>
+          <li>Build and maintain 20+ landing pages in a React/TypeScript portal (564 commits),
+            plus dashboards, GA4/UTM tracking and scheduled agent automations</li>
+          <li>Set the company's budget rule: contribution margin per landing page instead of
+            ROAS, so every page carries its own CPA ceiling</li>
+          <li>Found one ad driving 29 of 63 purchases on 13% of spend; fixing its destination
+            moved the account from 34 to 40 purchases and CPA from R$102 to R$95 in a single
+            week</li>
+          <li>Scaled Meta spend 45% while ROAS rose from 1.46 to 1.51 and purchases grew from
+            45 to 67</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="linha">
+      <div class="quando">January 2021<br>— February 2025<br>4 yrs 2 mos</div>
+      <div class="o-que">
+        <b>Visual Artist · Photography, Ceramics, Installation</b>
+        <p class="onde">Independent · Miguel Pereira and Rio de Janeiro, Brazil</p>
+        <p>Independent practice in ceramics, photography, printmaking and installation. I fire
+          clay in open pits together with electronic waste, organic matter and discarded
+          materials — work about the cycle of life, death and life, and about what human
+          intervention does to the land.</p>
+        <ul>
+          <li>Award, Festival do Minuto 2024 — Nano Minuto category, for the short film
+            “Incêndio”</li>
+          <li>Casero Art Residency 2024 — ten days in the Atlantic Forest, Itatiaia National
+            Park, curated by Fernanda Lopes and Bruno Miguel</li>
+          <li>Group shows at Casa da Escada Colorida (2023) and EAV Parque Lage (2021)</li>
+          <li>Ongoing critical mentorships with André Penteado (full scholarship) and Bruno
+            Miguel</li>
+          <li>Commissioned photography and video for brands and private clients</li>
+        </ul>
+        <p class="fecho">This is where my eye comes from. It taught me to turn complex ideas
+          into images and narratives, and to judge the work by what the material actually does
+          rather than by what I intended.</p>
+      </div>
+    </div>
+
+    <div class="linha">
+      <div class="quando">April 2015<br>— May 2021<br>6 yrs 2 mos</div>
+      <div class="o-que">
+        <b>Project &amp; Marketing Manager · Sítio Solidão</b>
+        <p class="onde">Rio de Janeiro and region, Brazil</p>
+        <p>Family-owned artisanal cheese company founded in 1987, supplying Rio de Janeiro and
+          the surrounding region.</p>
+        <ul>
+          <li>Created the trade marketing department from scratch and led a team of 14</li>
+          <li>Managed key retail accounts, including Zona Sul and Hortifruti</li>
+          <li>Led the company's professionalisation: implemented management systems across
+            departments and rebuilt logistics and administrative workflows</li>
+          <li>Built the marketing, communication and PR strategy, from positioning to point
+            of sale</li>
+        </ul>
+        <p class="fecho">Six years of operations, retail and team leadership inside a growing
+          business — and my first lesson that a brand is decided at the shelf, not in the deck.</p>
+      </div>
+    </div>
+
+    <div class="linha">
+      <div class="quando">April 2014<br>— March 2015<br>1 yr</div>
+      <div class="o-que">
+        <b>Trainee · Airswift</b>
+        <p class="onde">Rio de Janeiro, Brazil</p>
+        <p>Global recruitment company for Oil &amp; Gas projects.</p>
+        <ul>
+          <li>Recruited specialised professionals across project stages: screening, interviews
+            and face-to-face client meetings</li>
+          <li>Trained in Houston, Texas, in commercial, sales and recruitment programmes,
+            working with global teams and clients</li>
+        </ul>
+        <p class="fecho">My first exposure to international business and to commercial work.</p>
+      </div>
+    </div>
+
+    <div class="linha">
+      <div class="quando">February 2014<br>— March 2014<br>2 mos</div>
+      <div class="o-que">
+        <b>Trainee · Airswift</b>
+        <p class="onde">Houston, Texas, United States</p>
+        <ul>
+          <li>Oil &amp; Gas training</li>
+          <li>Commercial training</li>
+          <li>Sales training</li>
+          <li>Recruitment training</li>
+          <li>Live recruiting</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="linha">
+      <div class="quando">October 2012<br>— April 2013<br>7 mos</div>
+      <div class="o-que">
+        <b>DMI Intern, Skincare &amp; Deodorants for Garnier · L'Oréal</b>
+        <p>International marketing development (DMI) for Garnier skincare and deodorants.</p>
+        <ul>
+          <li>Developed new product concepts with the global marketing team</li>
+          <li>Ran packaging development briefings end to end</li>
+          <li>Contributed to advertising briefings and campaign development</li>
+          <li>Conducted market analysis and consumer research</li>
+        </ul>
+        <p class="fecho">My first school in brand management and consumer behaviour, inside a
+          global marketing operation.</p>
+      </div>
+    </div>
+
+    <div class="linha">
+      <div class="quando">January 2010<br>— July 2010<br>7 mos</div>
+      <div class="o-que">
+        <b>Trainee · Panorama Consultoria Internacional — Empresa Júnior</b>
+        <p class="onde">Rio de Janeiro, Brazil</p>
+        <p>Student-run consulting firm focused on international business projects.</p>
+        <ul>
+          <li>Managed relationships with client companies and institutional partners</li>
+          <li>Contributed to international consulting projects from planning to execution</li>
+          <li>Supported internal marketing initiatives and communication strategies</li>
+        </ul>
+        <p class="fecho">Early exposure to consulting mindset, project management and
+          client-facing work.</p>
+      </div>
+    </div>
+
+    <h3>Education</h3>
+    <div class="linha">
+      <div class="quando">September 2024</div>
+      <div class="o-que"><b>Casero Art Residency</b><p>Mentorship.</p></div>
+    </div>
+    <div class="linha">
+      <div class="quando">September 2024</div>
+      <div class="o-que"><b>Art Residency · Casa da Escada Colorida</b>
+        <p>Mentorship · scholarship recipient.</p></div>
+    </div>
+    <div class="linha">
+      <div class="quando">2024</div>
+      <div class="o-que"><b>Critical mentorship with André Penteado</b>
+        <p>Photography · full scholarship.</p></div>
+    </div>
+    <div class="linha">
+      <div class="quando">2022</div>
+      <div class="o-que"><b>School of Visual Arts at Parque Lage</b>
+        <p>Critical mentorship with Bruno Miguel.</p></div>
+    </div>
+    <div class="linha">
+      <div class="quando">2021</div>
+      <div class="o-que"><b>School of Visual Arts at Parque Lage</b>
+        <p>Languages of Space and Time: Return to the Physical World.</p></div>
+    </div>
+    <div class="linha">
+      <div class="quando">2018 — 2020</div>
+      <div class="o-que"><b>Ceramics mentorship with Vera Machado</b></div>
+    </div>
+
+    <h3>Top skills</h3>
+    <p>Performance marketing · React.js · Google Analytics</p>
+
+    <h3>Certifications</h3>
+    <ul>
+      <li>Understanding Consumer Behavior</li>
+      <li>Melhor Trainee</li>
+      <li>Social Media Marketing for Small Business</li>
+      <li>Leading and Working in Teams</li>
+      <li>Retail Index, Nielsen</li>
+    </ul>
+
+    <h3>Languages</h3>
+    <p>Portuguese (native or bilingual) · English (full professional) ·
+      German (professional working) · Spanish (elementary)</p>
+
+    <h3>Contact</h3>
+    <p><a href="mailto:olivia.kalicinski@gmail.com">olivia.kalicinski@gmail.com</a><br>
+      <a href="https://www.linkedin.com/in/olivia-kalicinski/" target="_blank"
+         rel="noopener">linkedin.com/in/olivia-kalicinski</a><br>
+      Miguel Pereira · Rio de Janeiro, Brazil</p>
+  </template>
+
+<script>
+const DENTRO={
+  trabalho:{ titulo:'The work', texto:[
+    'Comida de Dragão is a dog food made from insects, from the first insect biofactory '+
+    'in Rio de Janeiro. I own the brand\'s full acquisition P&amp;L and build the system '+
+    'that runs it.',
+    'No category, no competitor to copy, nobody out there searching for the product — '+
+    'so the demand had to be built, not captured. I built the network it runs on: '+
+    '2,310 creators, 343 of them veterinarians, across 26 states.' ]},
+
+  sitio:{ titulo:'The farm', texto:[
+    'Sítio Solidão, the family artisanal cheese company, founded 1987. Six years there, '+
+    'from 2015 to 2021.',
+    'I created the trade marketing department from scratch and led a team of fourteen. '+
+    'I managed the key retail accounts and rebuilt the logistics and administrative '+
+    'workflows along the way.',
+    'It is where I learned that a brand is decided at the shelf, not in the deck.' ]},
+
+  ceramica:{ titulo:'The pottery', texto:[
+    'I fire clay in open pits together with electronic waste, organic matter and discarded '+
+    'materials. The work is about the cycle of life, death and life, and about what human '+
+    'intervention does to the land.',
+    'Four years as a full-time visual artist, 2021 to 2025 — ceramics, photography, '+
+    'printmaking and installation. Award at Festival do Minuto 2024 for the short film '+
+    '“Incêndio”; Casero Art Residency 2024; group shows at Casa da Escada Colorida and '+
+    'EAV Parque Lage.',
+    'Not a detour. It is where the eye and the storytelling come from.' ]},
+
+  codigo:{ titulo:'The code', texto:[
+    'I taught myself to write code the way I learn everything else: by needing it first.',
+    'I build what I run — a React/TypeScript portal with 20+ landing pages (564 commits), '+
+    'dashboards, GA4 and UTM tracking, and the scheduled agent automations that read the '+
+    'numbers every morning. Nobody hired a developer. I stopped waiting for one.' ]},
+
+  cv:{ titulo:'Curriculum vitae', larga:true, molde:'cv-html' }
+};
+
+const dentro=document.getElementById('dentro');
+function abreDentro(id){
+  const d=DENTRO[id]; if(!d) return;
+  document.getElementById('dentro-titulo').textContent=d.titulo;
+  document.getElementById('dentro-texto').innerHTML =
+    d.molde ? document.getElementById(d.molde).innerHTML
+            : d.texto.map(t=>'<p>'+t+'</p>').join('');
+  dentro.querySelector('.folha').classList.toggle('larga', !!d.larga);
+  dentro.classList.add('no'); dentro.setAttribute('aria-hidden','false');
+  dentro.scrollTop=0;
+  document.getElementById('volta').focus();
+}
+function fechaDentro(){
+  dentro.classList.remove('no'); dentro.setAttribute('aria-hidden','true');
+}
+document.getElementById('volta').addEventListener('click', fechaDentro);
+addEventListener('keydown', e=>{ if(e.key==='Escape') fechaDentro(); });
+document.getElementById('link-cv').addEventListener('click', e=>{ e.preventDefault(); abreDentro('cv'); });
+
+/* cada peça com data-porta vira um alvo, de clique e de teclado */
+document.querySelectorAll('[data-porta]').forEach(el=>{
+  el.setAttribute('role','button'); el.setAttribute('tabindex','0');
+  el.setAttribute('aria-label', (DENTRO[el.dataset.porta]||{}).titulo || '');
+  el.addEventListener('click', ()=>abreDentro(el.dataset.porta));
+  el.addEventListener('keydown', e=>{
+    if(e.key==='Enter' || e.key===' '){ e.preventDefault(); abreDentro(el.dataset.porta); }
+  });
+});
+</script>

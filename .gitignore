@@ -14,3 +14,8 @@ casa/**
 !casa/sala/moldura.png
 !casa/sala/moldura.webp
 !casa/sala/molduras.webp
+
+# material de trabalho do recorte: os originais que vão para o ChatGPT
+# e as tentativas locais que não prestaram
+img/recorte/para-recortar/
+img/recorte/tentativa-local/
