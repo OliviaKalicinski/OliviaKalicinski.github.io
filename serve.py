@@ -16,6 +16,10 @@ class H(SimpleHTTPRequestHandler):
             nome = 'layout.json'
         elif alvo == '/salvar-hi':
             nome = 'layout-hi.json'
+        elif alvo == '/salvar-colagem':
+            nome = 'layout-colagem.json'
+        elif alvo == '/salvar-colagem-cel':
+            nome = 'layout-colagem-cel.json'
         else:
             self.send_error(404); return
         n = int(self.headers.get('Content-Length') or 0)

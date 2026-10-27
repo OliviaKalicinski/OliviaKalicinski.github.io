@@ -1,0 +1,140 @@
+{
+ "nome": {
+  "l": 4,
+  "t": 3,
+  "w": 23,
+  "r": 0,
+  "z": 1
+ },
+ "retrato": {
+  "l": -1.4,
+  "t": 11.6,
+  "w": 24.4,
+  "r": 0,
+  "z": 5
+ },
+ "larva": {
+  "l": 49.1,
+  "t": 59.2,
+  "w": 14.6,
+  "r": 0,
+  "z": 10
+ },
+ "jornal": {
+  "l": -3.8,
+  "t": 66.5,
+  "w": 21,
+  "r": 0,
+  "z": 4
+ },
+ "ceramica": {
+  "del": true
+ },
+ "ovelha": {
+  "del": true
+ },
+ "queijo": {
+  "del": true
+ },
+ "selo": {
+  "l": 21.7,
+  "t": 12.6,
+  "w": 5,
+  "r": 0,
+  "z": 7
+ },
+ "maquina": {
+  "l": 97,
+  "t": 10.5,
+  "w": 12,
+  "r": 0,
+  "z": 10
+ },
+ "cabine": {
+  "del": true
+ },
+ "recibo-git": {
+  "l": 38.4,
+  "t": 11.4,
+  "w": 22.9,
+  "r": 2,
+  "z": 7
+ },
+ "recibo": {
+  "l": 37.3,
+  "t": 39.3,
+  "w": 18.5,
+  "r": 0,
+  "z": 9
+ },
+ "marca": {
+  "del": true
+ },
+ "nota1": {
+  "del": true
+ },
+ "nota3": {
+  "del": true
+ },
+ "pe": {
+  "l": 3.6,
+  "t": 10.6,
+  "w": 42,
+  "r": 0,
+  "z": 1
+ },
+ "nova1": {
+  "l": 95.1,
+  "t": 70.9,
+  "w": 18,
+  "r": -1,
+  "z": 19,
+  "src": "img/banana/b1.jpg",
+  "estilo": "recorte"
+ },
+ "nova2": {
+  "l": 55.1,
+  "t": 35.3,
+  "w": 15,
+  "r": -4,
+  "z": 20,
+  "src": "img/pecas/10-sticker2.webp",
+  "estilo": "recorte"
+ },
+ "nova3": {
+  "l": 63.4,
+  "t": 15.1,
+  "w": 37,
+  "r": 2,
+  "z": 8,
+  "src": "img/pecas/04-vid.webp",
+  "estilo": "recorte"
+ },
+ "nova4": {
+  "l": 93.3,
+  "t": 55.4,
+  "w": 12,
+  "r": 0,
+  "z": 20,
+  "src": "img/pecas/09-sticker4.webp",
+  "estilo": "recorte"
+ },
+ "nova5": {
+  "l": 26.8,
+  "t": 15.8,
+  "w": 11,
+  "r": -4,
+  "z": 3,
+  "src": "img/recorte/cabine.png",
+  "estilo": "recorte"
+ },
+ "nova6": {
+  "l": 14.5,
+  "t": 71.1,
+  "w": 11,
+  "r": 4,
+  "z": 20,
+  "src": "img/pecas/00-photo.webp",
+  "estilo": "recorte"
+ }
+}

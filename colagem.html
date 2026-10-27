@@ -20,8 +20,8 @@
    4. A cor primária UNE, e é preciso saber onde parar (Heller e Anderson,
       The Graphic Design Idea Book, entrada 27, Paul Rand, pp.67-68).       */
 :root{
-  --osso:#e7e2d5; --tinta:#17150f; --risco:#c6bfab; --fita:#d8cfb4;
-  --superficie:url(img/fundos/branco.jpg);
+  --osso:#f3efe7; --tinta:#17150f; --risco:#c6bfab; --fita:#d8cfb4;
+  --superficie:url(img/fundos/grao.png);
   --disp:"Archivo",Impact,sans-serif;
   --nome:"Fraunces",Georgia,serif;
 }
@@ -32,13 +32,20 @@ body{background:var(--osso);color:var(--tinta);font-family:var(--disp);
 
 .parede{min-height:100vh;padding:clamp(14px,2.2vw,34px);
   display:flex;align-items:center;justify-content:center;
-  background-color:var(--osso);
+  /* bege neutro com um grão que emenda: a textura não tem escala, então
+     nunca parece uma foto esticada quando a janela cresce */
+  background-color:#f3efe7;
   background-image:var(--superficie);
-  background-size:cover;background-position:center}
+  background-size:210px 210px;background-repeat:repeat}
 
-/* o mural é um campo de proporção fixa: assim a composição não se desmancha */
-.mural{position:relative;width:100%;max-width:1380px;aspect-ratio:16/10;
-  max-height:calc(100vh - clamp(28px,4.4vw,68px))}
+/* ---- o mural tem tamanho fixo em pixels e a TELA INTEIRA é que encolhe ----
+   1380x862 no computador, 410x888 no celular. Nada lá dentro é recalculado
+   quando a janela muda: o conjunto inteiro é reduzido de uma vez, com
+   transform:scale(). Assim sombra, tipo, fita e posição encolhem juntos e a
+   organização nunca se desmancha.                                            */
+.caixa-mural{position:relative;margin:auto}
+.mural{position:absolute;left:0;top:0;width:1380px;height:862px;
+  transform-origin:0 0}
 
 /* peça: papel sobre papel. a sombra é o que diz que uma está em cima da outra */
 .p{position:absolute;background:#fbf9f3;padding:.9%;
@@ -68,22 +75,7 @@ body{background:var(--osso);color:var(--tinta);font-family:var(--disp);
 /* no retrato a fita desce pela lateral, para não cair em cima do texto */
 .p.fita.retrato::before{left:-11%;top:16%;transform:rotate(-74deg)}
 .p.fita.retrato::after{right:-11%;bottom:14%;transform:rotate(-74deg)}
-.maos{--fita-img:url(img/fitas/fita-03.png)}
 .ceramica{--fita-img:url(img/fitas/fita-01.png)}
-
-/* a pilha de landing pages: quatro em leque, lidas como uma peça só */
-.pilha{position:absolute;display:block;text-decoration:none;color:inherit}
-.pilha img{position:absolute;left:0;top:0;width:100%;height:auto;
-  background:#fbf9f3;padding:4%;filter:contrast(1.03) saturate(.96);
-  box-shadow:1px 2px 1px -1px rgba(23,21,15,.2), 5px 9px 14px -6px rgba(23,21,15,.5)}
-.pilha img:nth-child(1){transform:rotate(-7deg) translate(-9%,2%)}
-.pilha img:nth-child(2){transform:rotate(-2.5deg) translate(-3%,0)}
-.pilha img:nth-child(3){transform:rotate(2deg) translate(3%,1%)}
-.pilha img:nth-child(4){position:relative;transform:rotate(6deg) translate(9%,0)}
-.pilha b{position:absolute;left:50%;bottom:-13%;transform:translateX(-50%);
-  white-space:nowrap;font-size:clamp(8.5px,.72vw,11px);letter-spacing:.14em;
-  text-transform:uppercase;color:#5d5748;background:var(--osso);padding:2px 7px}
-.pilha:hover img, .pilha:focus-visible img{box-shadow:1px 2px 1px -1px rgba(23,21,15,.2), 10px 18px 26px -10px rgba(23,21,15,.62)}
 
 /* peça recortada no contorno: não é foto emoldurada, é coisa solta na superfície */
 .p.recorte{background:none;padding:0;box-shadow:none}
@@ -93,9 +85,11 @@ body{background:var(--osso);color:var(--tinta);font-family:var(--disp);
 .p.recorte.porta:hover img, .p.recorte.porta:focus-visible img{
   filter:contrast(1.03) saturate(.96) drop-shadow(7px 12px 10px rgba(23,21,15,.5))}
 .p.recorte::before,.p.recorte::after{display:none}
+/* peça recortada não leva legenda: isso é de foto emoldurada */
 .p.recorte figcaption{display:none}
+/* o recibo é papel térmico: entra sem moldura branca */
 .p.recibo{background:none;padding:0;box-shadow:none}
-.p.recibo img{filter:drop-shadow(3px 5px 5px rgba(23,21,15,.35))}  /* coisa recortada não leva legenda */
+.p.recibo img{filter:drop-shadow(3px 5px 5px rgba(23,21,15,.35))}
 
 /* adesivo e selo não levam papel branco: são a segunda família de material */
 .s{position:absolute}
@@ -109,8 +103,6 @@ body{background:var(--osso);color:var(--tinta);font-family:var(--disp);
 
 h1{position:absolute;margin:0;line-height:1}
 h1 img{display:block;width:100%;height:auto;mix-blend-mode:multiply}
-.cargo{position:absolute;font-family:var(--nome);font-weight:500;
-  font-size:clamp(12px,1.22vw,19px);line-height:1.3;color:#2b2820;margin:0}
 .pe{position:absolute;display:flex;flex-wrap:wrap;gap:4px 16px;
   font-size:clamp(8.5px,.72vw,11px);letter-spacing:.12em;text-transform:uppercase;
   color:#55503f;margin:0}
@@ -119,71 +111,55 @@ h1 img{display:block;width:100%;height:auto;mix-blend-mode:multiply}
 /* ---- onde cada peça pousa, em % do mural ----
    o retrato é a artéria; tudo o que vem depois encosta nele ou em quem encostou */
 .nome    {left:4%;  top:3%;   width:30%}
-.cargo   {left:4%;  top:14%;  width:29%}
-.retrato {left:4%;  top:24%;  width:29%;  z-index:5}
+.retrato {left:5%;  top:25%;  width:24%;  transform:rotate(-4.5deg); z-index:5}
+.selo    {left:23%; top:26%;  width:5%;   transform:rotate(13deg);  z-index:7}
+
+/* tudo de comida de dragão em cima, à direita do retrato */
+.maquina {left:30%; top:32%;  width:9%;   transform:rotate(7deg);   z-index:6}
 .larva   {left:27%; top:44%;  width:13%;  transform:rotate(6deg);   z-index:9}
+.jornal  {left:32%; top:6%;   width:22%;  transform:rotate(-1.5deg); z-index:4}
+.ceramica{left:26%; top:62%;  width:19%;  transform:rotate(2deg);  z-index:4}
+.marca   {left:46%; top:22%;  width:11%;  transform:rotate(-3deg);  z-index:8}
+.cabine  {left:54%; top:1%;   width:12%;  transform:rotate(-3deg);  z-index:5}
+.recibo  {left:54%; top:28%;  width:14%;  transform:rotate(4deg);   z-index:9}
+.recibo-git{left:64%; top:55%;  width:11%;  transform:rotate(-3deg);  z-index:7}
 
-/* o sítio, em cima à direita */
-.ovelha  {left:67%; top:13%;  width:33%;  z-index:3}
-.queijo  {left:60%; top:36%;  width:10%;  transform:rotate(7deg);   z-index:8}
-.maos    {left:56%; top:55%;  width:15%;  z-index:5}
-.selo    {left:68%; top:52%;  width:7%;   transform:rotate(-8deg);  z-index:10}
-
-/* o trabalho, no alto do meio */
-.ceramica{left:32%; top:8%;   width:20%;  z-index:4}
-.cabine  {left:55%; top:1%;   width:9%;   transform:rotate(-3deg);  z-index:5}
-.recibo  {left:46%; top:10%;  width:7%;   transform:rotate(3deg);   z-index:7}
-.marca   {left:40%; top:66%;  width:12%;  transform:rotate(-3deg);  z-index:9}
-
-/* o código, embaixo à esquerda */
-.pilha   {left:3%;  top:60%;  width:11%;  z-index:7}
-.cereb   {left:2%;  top:79%;  width:9%;   transform:rotate(-7deg);  z-index:8}
-.maquina {left:17%; top:76%;  width:10%;  transform:rotate(7deg);   z-index:6}
-
-/* a arte, à direita embaixo */
-.arte2   {left:84%; top:50%;  width:13%;  z-index:5}
-.arte1   {left:71%; top:70%;  width:14%;  z-index:5}
-.banana  {left:86%; top:76%;  width:13%;  transform:rotate(-4deg);  z-index:6}
+/* o sítio, na base */
+.queijo  {left:58%; top:60%;  width:13%;  transform:rotate(3deg);   z-index:6}
+.ovelha  {left:74%; top:60%;  width:20%;  transform:rotate(-2deg);  z-index:5}
 
 .nota1   {left:2%;  top:91%;  width:19%}
-.nota2   {left:54%; top:88%;  width:26%}
 .nota3   {left:23%; top:91%;  width:21%}
 .pe      {left:44%; top:96.5%;width:42%}
 
-@media (max-aspect-ratio:1/1){
+@media (max-width:820px){
   /* celular primeiro: a parede inteira cabe numa tela, sem rolagem */
-  .parede{height:100vh;height:100dvh;padding:10px;align-items:stretch;overflow:hidden}
-  .mural{aspect-ratio:auto;width:100%;height:100%;max-height:none}
+  .parede{height:100vh;height:100dvh;padding:10px;align-items:center;overflow:hidden}
+  /* 9:19,5 é a proporção dos celulares de hoje (430x932): a moldura fixa
+     praticamente preenche a tela, sem sobrar faixa de papel em cima e embaixo */
+  .mural{width:410px;height:888px}
   .nome    {left:3%;  top:1%;   width:60%}
-  .cargo   {left:3%;  top:6.5%; width:72%; font-size:12px;line-height:1.32}
-
+  
   .retrato {left:3%;  top:15%;  width:36%; z-index:5}
   .ceramica{left:40%; top:15%;  width:32%; z-index:4}
-      .cabine  {left:74%; top:24%;  width:13%; z-index:5}
-  .recibo  {left:88%; top:34%;  width:11%; z-index:7}
-    .cereb   {left:62%; top:27%;  width:18%; z-index:8}
-  .larva   {left:31%; top:27%;  width:18%; z-index:9}
+      .cabine  {left:62%; top:30%;  width:20%; z-index:5}
+  .recibo  {left:64%; top:44%;  width:24%; z-index:9}
+  .recibo-git{left:8%; top:44%; width:24%; z-index:7}
+      .larva   {left:31%; top:27%;  width:18%; z-index:9}
 
   .ovelha  {left:3%;  top:40%;  width:42%; z-index:3}
-  .queijo  {left:49%; top:42%;  width:19%; z-index:6}
-  .pilha   {left:68%; top:38%;  width:19%; z-index:7}
-  .maos    {left:3%;  top:54%;  width:29%; z-index:5}
-  .selo    {left:30%; top:53%;  width:11%; z-index:10}
+  .queijo  {left:5%;  top:62%;  width:30%; z-index:6}
+      .selo    {left:30%; top:53%;  width:11%; z-index:10}
 
-  .arte1   {left:42%; top:57%;  width:26%; z-index:5}
-  .banana  {left:71%; top:58%;  width:22%; z-index:6}
-  .arte2   {left:3%;  top:64%;  width:24%; z-index:5}
-  .marca   {left:26%; top:69%;  width:24%; z-index:9}
-  .maquina {left:54%; top:70%;  width:15%; z-index:6}
+        .marca   {left:26%; top:69%;  width:24%; z-index:9}
+  .maquina {left:38%; top:38%;  width:15%; z-index:6}
 
   /* o texto corrido mora dentro das portas; aqui fica só o essencial */
   .nota1, .nota3{display:none}
-  .nota2   {left:3%;  top:78%;  width:93%; font-size:11.5px;line-height:1.45}
-  .pe      {left:3%;  top:93%;  width:94%; font-size:10.5px}
+    .pe      {left:3%;  top:93%;  width:94%; font-size:10.5px}
   .p.fita::before,.p.fita::after{height:9px}
   .p{padding:1.6%}
   .p figcaption{display:none}
-  .pilha b{font-size:8.5px;bottom:-11%}
 }
 /* o que abre quando se tira uma peça da parede */
 .dentro{position:fixed;inset:0;z-index:20;overflow-y:auto;
@@ -227,14 +203,56 @@ h1 img{display:block;width:100%;height:auto;mix-blend-mode:multiply}
   color:#5d5748;cursor:pointer;margin-bottom:clamp(20px,4vh,38px)}
 .volta:hover{color:var(--tinta)}
 @media (max-width:620px){ .dentro .linha{grid-template-columns:1fr;gap:4px} }
+
+/* ---- o board: arrastar, girar, redimensionar e salvar ---- */
+.editando .mural > *{cursor:grab}
+.editando .mural > *.pega{cursor:grabbing}
+.editando .alvo{outline:2px solid #e0005a;outline-offset:3px}
+.barra{position:fixed;left:50%;bottom:14px;transform:translateX(-50%);z-index:50;
+  touch-action:none;user-select:none;max-width:calc(100vw - 12px);
+  display:flex;align-items:center;flex-wrap:wrap;gap:8px 12px;background:rgba(23,21,15,.93);color:#f3efe4;
+  padding:9px 16px;border-radius:3px;font:500 11.5px/1.3 var(--disp);letter-spacing:.09em;
+  text-transform:uppercase;box-shadow:0 10px 30px -10px rgba(0,0,0,.6)}
+.barra b{font-weight:700;color:#ffd0e0;min-width:8ch}
+.barra .puxe{cursor:grab;padding:2px 6px 4px;font-size:15px;line-height:1;color:#8c8678;
+  letter-spacing:-.1em}
+.barra.movendo .puxe{cursor:grabbing}
+.barra span{opacity:.72;text-transform:none;letter-spacing:.02em;font-size:11px}
+.barra button{font:inherit;letter-spacing:.09em;text-transform:uppercase;
+  background:#f3efe4;color:#17150f;border:0;padding:6px 12px;border-radius:2px;cursor:pointer}
+.barra button:hover{background:#fff}
+.barra .ok{background:#2fa36b;color:#fff}
+
+/* em janela estreita a barra fica compacta, senão não cabe e não dá para usar */
+@media (max-width:820px){
+  .barra{gap:6px 7px;padding:7px 9px;font-size:10px;letter-spacing:.05em;bottom:8px;
+    left:6px;right:6px;transform:none;max-width:none;justify-content:center}
+  .barra b{min-width:0;font-size:10px}
+  .barra #b-val{display:none}
+  .barra #b-onde{font-size:9px;width:100%;text-align:center;order:-1}
+  .barra button{padding:7px 9px;font-size:10px}
+  .barra #b-msg{width:100%;text-align:center;font-size:9.5px}
+  .gaveta{max-height:38vh;padding:10px 10px 96px;
+    grid-template-columns:repeat(auto-fill,minmax(68px,1fr))}
+  .gaveta img{height:46px}
+}
+.barra .perigo{background:#c23b53;color:#fff}
+.gaveta{position:fixed;left:0;right:0;bottom:0;z-index:49;max-height:46vh;overflow-y:auto;
+  background:rgba(23,21,15,.96);padding:14px 14px 70px;display:none;
+  grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:8px}
+.gaveta.no{display:grid}
+.gaveta button{background:#f3efe4;border:0;padding:4px;cursor:pointer;border-radius:2px;
+  display:flex;flex-direction:column;gap:3px;align-items:center}
+.gaveta button:hover{background:#fff;outline:2px solid #e0005a}
+.gaveta img{width:100%;height:62px;object-fit:contain}
+.gaveta small{font:500 8px/1.2 var(--disp);color:#55504a;word-break:break-all;text-align:center}
 </style>
 
 <div class="parede">
+ <div class="caixa-mural" id="caixa">
   <div class="mural">
 
     <h1 class="nome"><img src="nome.png" alt="Olivia Kalicinski"></h1>
-    <p class="cargo">Head of Growth. I own the acquisition P&amp;L of a dog food made
-      from insects — and I write the code it runs on.</p>
 
     <figure class="p recorte retrato"><img src="img/recorte/retrato.png" alt="Olivia"></figure>
 
@@ -242,6 +260,9 @@ h1 img{display:block;width:100%;height:auto;mix-blend-mode:multiply}
       <img src="img/recorte/larva.png" alt="Larva de mosca soldado negra">
       <figcaption>the product, before it is food</figcaption>
     </figure>
+
+    <figure class="p recorte porta jornal" data-porta="sitio">
+      <img src="img/recorte/jornal-sitio.png" alt="Reportagem: Sítio Solidão é pioneiro na criação de ovelhas leiteiras no Rio"></figure>
 
     <figure class="p recorte porta ceramica" data-porta="ceramica">
       <img src="img/recorte/ceramica.png" alt="Olivia dando aula de cerâmica">
@@ -252,42 +273,21 @@ h1 img{display:block;width:100%;height:auto;mix-blend-mode:multiply}
 
     <figure class="p recorte porta queijo" data-porta="sitio"><img src="img/recorte/queijo.png" alt="Tábua de queijos"></figure>
 
-    <figure class="p fita porta maos" data-porta="sitio">
-      <img style="filter:brightness(1.6) contrast(.97)"
-           src="img/pecas/01-as-maos-na-queijaria-do-sitio-solidao.webp" alt="Mãos na queijaria">
-      <figcaption>sítio solidão, the family dairy</figcaption>
-    </figure>
-
     <div class="s selo"><img src="img/pecas/08-sticker3.webp" alt="Selo postal do Brasil"></div>
     <div class="s porta maquina" data-porta="codigo"><img src="img/pecas/07-sticker5.webp" alt="hello world"></div>
-
-
-    <figure class="p recorte porta cereb" data-porta="codigo"><img src="img/cerebro.png" alt="Cérebro"></figure>
     <figure class="p porta cabine" data-porta="trabalho">
       <img src="img/recorte/cabine.png" alt="Tira de cabine com as creators no estande"></figure>
 
+    <figure class="p recibo porta recibo-git" data-porta="codigo">
+      <img src="img/recorte/recibo-commits.png" alt="Recibo: o git log dos commits"></figure>
+
     <figure class="p porta recibo" data-porta="trabalho">
       <img src="img/recorte/recibo-rede.png" alt="Recibo: a rede de creators"></figure>
-
-    <figure class="p porta banana" data-porta="ceramica">
-      <img src="img/banana/b1.jpg" alt="Azulejo com cascas de banana"></figure>
-    <figure class="p porta arte1" data-porta="ceramica">
-      <img src="img/pf/t-10.jpg" alt="Série Data Dump, 2024"><figcaption>data dump, 2024</figcaption></figure>
-    <figure class="p porta arte2" data-porta="ceramica">
-      <img src="img/pf/t-18.jpg" alt="Untitled, 2024"><figcaption>untitled, 2024</figcaption></figure>
-
-    <a class="pilha porta" data-porta="codigo" href="#" onclick="return false">
-      <img src="img/lps/01-alergia.jpg" alt=""><img src="img/lps/08-original.jpg" alt="">
-      <img src="img/lps/21-portal-home.jpg" alt=""><img src="img/lps/42-loja-home.jpg" alt="">
-      <b>58 pages</b></a>
 
     <div class="s porta marca" data-porta="trabalho"><img src="img/cdd/logo-letra-preta.png" alt="Comida de Dragão"></div>
 
     <p class="nota nota1"><b>Rio de Janeiro.</b> Open to remote.<br>
       Twelve years at the wheel before any of this.</p>
-    <p class="nota nota2">No category, no competitor to copy, nobody searching for the
-      product. <b>The demand had to be built, not captured:</b> 2,310 creators, 343 of
-      them veterinarians, across 26 states.</p>
     <p class="nota nota3"><b>I build what I run.</b> 20+ landing pages in a React/TypeScript
       portal, dashboards, tracking and scheduled agent automations. Self-taught.</p>
 
@@ -298,6 +298,7 @@ h1 img{display:block;width:100%;height:auto;mix-blend-mode:multiply}
     </footer>
 
   </div>
+ </div>
 </div>
 
 <article class="dentro" id="dentro" aria-hidden="true">
@@ -592,4 +593,279 @@ document.querySelectorAll('[data-porta]').forEach(el=>{
     if(e.key==='Enter' || e.key===' '){ e.preventDefault(); abreDentro(el.dataset.porta); }
   });
 });
+</script>
+
+<script>
+/* ---- o board ----
+   Arrasta para mover. Roda a rolagem para aumentar, alt+rolagem para girar.
+   Setas movem de 0,2%; com shift, de 1%. Salva em layout-colagem.json.       */
+const CEL='(max-width:820px)';
+
+/* ====================================================================
+   O BOARD, reescrito em 27/10 depois de dois defeitos medidos:
+   1. o estilo que o board escrevia na peça era um só, não um por tela —
+      então arrumar o celular desarrumava o computador;
+   2. a barra continuava dizendo "celular" depois de alargar a janela,
+      e salvar ali gravava a posição do celular no arquivo do computador.
+   Agora cada tela tem o seu arranjo em memória, e trocar de tela limpa
+   o que estava escrito na peça antes de aplicar o arranjo da outra.
+   ==================================================================== */
+(function(){
+  const MODOS={
+    desk:{arq:'layout-colagem.json',     rota:'/salvar-colagem',     W:1380, H:862, nome:'computador'},
+    cel :{arq:'layout-colagem-cel.json', rota:'/salvar-colagem-cel', W:410,  H:888, nome:'celular'}
+  };
+  const caixa=document.getElementById('caixa');
+  const mural=caixa.querySelector('.mural');
+  const parede=document.querySelector('.parede');
+  const editando=location.hash.startsWith('#editar');
+
+  const qual=()=>matchMedia(CEL).matches?'cel':'desk';
+  const AUX=['p','s','recorte','porta','fita','fita1','pega','alvo','nota'];
+  const id=e=>[...e.classList].filter(c=>!AUX.includes(c)).pop()||'sem-nome';
+  const num=v=>Math.round(v*10)/10;
+  const grau=e=>{const t=(e.style.transform||'').match(/rotate\((-?[\d.]+)deg\)/); return t?parseFloat(t[1]):0};
+  const pecas=()=>[...mural.children];
+
+  const arranjos={};            /* o que veio de cada arquivo */
+  let modo=null, alvo=null, sujo=false;
+
+  /* ---- a tela inteira encolhe junta: tamanho fixo e uma escala só ---- */
+  function ajusta(){
+    const m=MODOS[qual()];
+    const cs=getComputedStyle(parede);
+    const dW=parede.clientWidth  - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
+    const dH=parede.clientHeight - parseFloat(cs.paddingTop)  - parseFloat(cs.paddingBottom);
+    const k=Math.min(dW/m.W, dH/m.H);
+    mural.style.width=m.W+'px'; mural.style.height=m.H+'px';
+    mural.style.transform='scale('+k+')';
+    caixa.style.width=(m.W*k)+'px'; caixa.style.height=(m.H*k)+'px';
+  }
+
+  /* ---- peça que nasceu no board: existe só se algum arranjo pedir ---- */
+  function garante(n, v){
+    let e=mural.querySelector('.'+n);
+    if(e) return e;
+    e=document.createElement('figure');
+    e.className='p '+(v.estilo||'recorte')+' '+n;
+    e.innerHTML='<img src="'+v.src+'" alt="">';
+    e.dataset.src=v.src; e.dataset.estilo=v.estilo||'recorte';
+    mural.appendChild(e);
+    return e;
+  }
+
+  /* ---- aplica o arranjo de uma tela, limpando o da outra antes ---- */
+  function aplica(m){
+    const d=arranjos[m]||{};
+    pecas().forEach(e=>{
+      e.style.left=e.style.top=e.style.width=e.style.transform=e.style.zIndex='';
+      e.style.display=''; delete e.dataset.apagada;
+      if(e.dataset.src && !d[id(e)]) e.style.display='none';   /* peça de outra tela */
+    });
+    Object.entries(d).forEach(([n,v])=>{ if(v.src) garante(n,v); });
+    pecas().forEach(e=>{
+      const v=d[id(e)]; if(!v) return;
+      /* apagada no arquivo continua apagada, e o próximo salvamento mantém */
+      if(v.del){ e.style.display='none'; e.dataset.apagada='1'; return; }
+      if(v.l!=null) e.style.left=v.l+'%';
+      if(v.t!=null) e.style.top=v.t+'%';
+      if(v.w)       e.style.width=v.w+'%';
+      if(v.r)       e.style.transform='rotate('+v.r+'deg)';
+      if(v.z!=null) e.style.zIndex=v.z;
+    });
+    modo=m;
+    if(editando) rotula();
+  }
+
+  function carrega(m){
+    if(arranjos[m]) return Promise.resolve();
+    return fetch(MODOS[m].arq,{cache:'no-store'})
+      .then(r=>r.ok?r.json():{}).catch(()=>({}))
+      .then(d=>{arranjos[m]=d});
+  }
+
+  function troca(){
+    const m=qual();
+    ajusta();
+    if(m===modo) return;
+    if(sujo && !confirm('Há mudança não salva nesta tela. Trocar assim mesmo?')) return;
+    sujo=false;
+    carrega(m).then(()=>aplica(m));
+  }
+
+  ajusta();
+  carrega(qual()).then(()=>aplica(qual()));
+  addEventListener('resize', troca);
+  addEventListener('orientationchange', troca);
+  /* o evento de resize nem sempre chega; a régua da tela avisa sempre */
+  matchMedia(CEL).addEventListener('change', troca);
+  document.fonts && document.fonts.ready.then(ajusta);
+
+  if(!editando) return;
+  document.documentElement.classList.add('editando');
+
+  /* ------------------------------ a barra ------------------------------ */
+  const barra=document.createElement('div');
+  barra.className='barra';
+  barra.innerHTML='<span class="puxe" id="b-puxe" title="arraste a barra; dois cliques volta para baixo">⠿⠿</span>'+
+    '<span id="b-onde"></span><b id="b-alvo">—</b><span id="b-val"></span>'+
+    '<button id="b-gira-e">↺</button><button id="b-gira-d">↻</button>'+
+    '<button id="b-frente">frente</button><button id="b-tras">trás</button>'+
+    '<button id="b-add">+ peça</button>'+
+    '<button class="perigo" id="b-del">apagar</button>'+
+    '<button class="ok" id="b-salvar">salvar</button><span id="b-msg"></span>';
+  document.body.appendChild(barra);
+  const eAlvo=barra.querySelector('#b-alvo'), eVal=barra.querySelector('#b-val'),
+        eMsg=barra.querySelector('#b-msg'), eOnde=barra.querySelector('#b-onde');
+
+  function rotula(){
+    const m=MODOS[modo||qual()];
+    eOnde.textContent=m.nome+' · '+m.arq;
+    eOnde.style.color = modo==='cel' ? '#ffc98f' : '#9fd6b6';
+  }
+  const sujou=()=>{ sujo=true;
+    barra.style.boxShadow='0 0 0 2px #e0005a, 0 10px 30px -10px rgba(0,0,0,.6)';
+    eMsg.textContent='há mudança por salvar'; };
+  const limpou=n=>{ sujo=false;
+    barra.style.boxShadow='0 10px 30px -10px rgba(0,0,0,.6)';
+    eMsg.textContent='salvo · '+n+' peças · '+MODOS[modo].nome; };
+  addEventListener('beforeunload', e=>{ if(sujo){ e.preventDefault(); e.returnValue=''; } });
+
+  /* a barra se move, e nunca nasce fora da tela */
+  (function barraMovel(){
+    const puxe=barra.querySelector('#b-puxe');
+    const g=localStorage.getItem('barra-colagem');
+    if(g && !matchMedia(CEL).matches){ const o=JSON.parse(g);
+      barra.style.left=Math.max(0,Math.min(innerWidth-140,o.x))+'px';
+      barra.style.top =Math.max(0,Math.min(innerHeight-70,o.y))+'px';
+      barra.style.bottom='auto'; barra.style.transform='none'; }
+    let d=null;
+    puxe.addEventListener('pointerdown', ev=>{ ev.preventDefault(); ev.stopPropagation();
+      const r=barra.getBoundingClientRect(); d={dx:ev.clientX-r.left, dy:ev.clientY-r.top};
+      barra.classList.add('movendo'); puxe.setPointerCapture(ev.pointerId); });
+    puxe.addEventListener('pointermove', ev=>{ if(!d) return;
+      barra.style.left=Math.max(0,Math.min(innerWidth-barra.offsetWidth, ev.clientX-d.dx))+'px';
+      barra.style.top =Math.max(0,Math.min(innerHeight-barra.offsetHeight, ev.clientY-d.dy))+'px';
+      barra.style.bottom='auto'; barra.style.transform='none'; });
+    puxe.addEventListener('pointerup', ()=>{ if(!d) return; d=null;
+      barra.classList.remove('movendo');
+      const r=barra.getBoundingClientRect();
+      localStorage.setItem('barra-colagem', JSON.stringify({x:Math.round(r.left), y:Math.round(r.top)})); });
+    puxe.addEventListener('dblclick', ev=>{ ev.stopPropagation();
+      barra.style.left='50%'; barra.style.top='auto'; barra.style.bottom='14px';
+      barra.style.transform='translateX(-50%)'; localStorage.removeItem('barra-colagem'); });
+  })();
+
+  /* --------------------------- mover e medir --------------------------- */
+  function mostra(){
+    if(!alvo){ eAlvo.textContent='—'; eVal.textContent=''; return; }
+    eAlvo.textContent=id(alvo);
+    eVal.textContent='x '+num(parseFloat(alvo.style.left))+'%  y '+num(parseFloat(alvo.style.top))+
+      '%  larg '+num(parseFloat(alvo.style.width)||0)+'%  '+num(grau(alvo))+'°  z'+(alvo.style.zIndex||'');
+  }
+  function seleciona(e){
+    if(alvo) alvo.classList.remove('alvo');
+    alvo=e; if(!alvo) return mostra();
+    const cs=getComputedStyle(alvo), m=mural.getBoundingClientRect(), r=alvo.getBoundingClientRect();
+    const k=m.width/MODOS[modo].W;                 /* desfaz a escala da tela */
+    if(!alvo.style.left)  alvo.style.left =num((r.left-m.left)/m.width*100)+'%';
+    if(!alvo.style.top)   alvo.style.top  =num((r.top-m.top)/m.height*100)+'%';
+    if(!alvo.style.width) alvo.style.width=num(r.width/m.width*100)+'%';
+    if(!alvo.style.zIndex)alvo.style.zIndex=cs.zIndex==='auto'?1:cs.zIndex;
+    alvo.classList.add('alvo'); mostra();
+  }
+
+  let arrastando=null;
+  mural.addEventListener('click', ev=>{ ev.preventDefault(); ev.stopPropagation(); }, true);
+  mural.addEventListener('pointerdown', ev=>{
+    const e=ev.target.closest('.mural > *'); if(!e) return;
+    ev.preventDefault(); seleciona(e); e.classList.add('pega'); e.setPointerCapture(ev.pointerId);
+    arrastando={x:ev.clientX, y:ev.clientY, l:parseFloat(e.style.left), t:parseFloat(e.style.top),
+                m:mural.getBoundingClientRect()};
+  });
+  mural.addEventListener('pointermove', ev=>{
+    if(!arrastando||!alvo) return;
+    alvo.style.left=num(arrastando.l+(ev.clientX-arrastando.x)/arrastando.m.width*100)+'%';
+    alvo.style.top =num(arrastando.t+(ev.clientY-arrastando.y)/arrastando.m.height*100)+'%';
+    mostra(); sujou();
+  });
+  addEventListener('pointerup', ()=>{ if(alvo) alvo.classList.remove('pega'); arrastando=null; });
+
+  mural.addEventListener('wheel', ev=>{
+    if(!alvo) return; ev.preventDefault();
+    const d=ev.deltaY>0?-1:1;
+    if(ev.altKey) alvo.style.transform='rotate('+num(grau(alvo)+d)+'deg)';
+    else alvo.style.width=num(Math.max(1,parseFloat(alvo.style.width)+d*0.5))+'%';
+    mostra(); sujou();
+  },{passive:false});
+
+  addEventListener('keydown', ev=>{
+    if((ev.metaKey||ev.ctrlKey) && ev.key==='s'){ ev.preventDefault(); salvar(); return; }
+    if(!alvo) return;
+    const passo=ev.shiftKey?1:0.2;
+    const mover=(dx,dy)=>{ ev.preventDefault();
+      alvo.style.left=num(parseFloat(alvo.style.left)+dx*passo)+'%';
+      alvo.style.top =num(parseFloat(alvo.style.top)+dy*passo)+'%'; mostra(); sujou(); };
+    if(ev.key==='ArrowLeft')  mover(-1,0);
+    if(ev.key==='ArrowRight') mover(1,0);
+    if(ev.key==='ArrowUp')    mover(0,-1);
+    if(ev.key==='ArrowDown')  mover(0,1);
+    if(ev.key==='['){ alvo.style.transform='rotate('+num(grau(alvo)-1)+'deg)'; mostra(); sujou(); }
+    if(ev.key===']'){ alvo.style.transform='rotate('+num(grau(alvo)+1)+'deg)'; mostra(); sujou(); }
+    if(ev.key==='Escape') seleciona(null);
+  });
+
+  const gira=d=>{ if(!alvo) return; alvo.style.transform='rotate('+num(grau(alvo)+d)+'deg)'; mostra(); sujou(); };
+  barra.querySelector('#b-gira-e').onclick=()=>gira(-2);
+  barra.querySelector('#b-gira-d').onclick=()=>gira(2);
+  barra.querySelector('#b-frente').onclick=()=>{ if(alvo){alvo.style.zIndex=(+alvo.style.zIndex||1)+1; mostra(); sujou();} };
+  barra.querySelector('#b-tras').onclick  =()=>{ if(alvo){alvo.style.zIndex=Math.max(0,(+alvo.style.zIndex||1)-1); mostra(); sujou();} };
+  barra.querySelector('#b-del').onclick   =()=>{ if(!alvo) return;
+    alvo.style.display='none'; alvo.dataset.apagada='1'; seleciona(null); sujou(); };
+
+  /* ------------------------------ a gaveta ----------------------------- */
+  const gaveta=document.createElement('div'); gaveta.className='gaveta';
+  document.body.appendChild(gaveta);
+  let carregou=false;
+  barra.querySelector('#b-add').onclick=()=>{
+    gaveta.classList.toggle('no');
+    if(carregou) return; carregou=true;
+    fetch('pecas-disponiveis.json',{cache:'no-store'}).then(r=>r.json()).then(lista=>{
+      gaveta.innerHTML='';
+      lista.forEach(src=>{
+        const b=document.createElement('button');
+        b.innerHTML='<img src="'+src+'" loading="lazy" alt=""><small>'+src.split('/').pop()+'</small>';
+        b.onclick=()=>{
+          let n, i=1; do{ n='nova'+(i++); }while(mural.querySelector('.'+n));
+          const e=garante(n,{src:src,estilo:'recorte'});
+          e.style.left='40%'; e.style.top='40%'; e.style.width='14%'; e.style.zIndex=20;
+          e.style.display=''; seleciona(e); sujou();
+          gaveta.classList.remove('no');
+        };
+        gaveta.appendChild(b);
+      });
+    }).catch(()=>{ gaveta.innerHTML='<small style="color:#f3efe4">não achei pecas-disponiveis.json</small>'; });
+  };
+
+  /* ------------------------------- salvar ------------------------------ */
+  function salvar(){
+    const d={};
+    pecas().forEach(e=>{
+      const n=id(e);
+      if(e.dataset.apagada){ d[n]={del:true}; return; }
+      if(e.style.display==='none') return;              /* peça da outra tela */
+      if(!e.style.left && !e.style.width) return;       /* nunca foi tocada */
+      const o={l:num(parseFloat(e.style.left)), t:num(parseFloat(e.style.top)),
+               w:num(parseFloat(e.style.width)||0), r:num(grau(e)), z:+e.style.zIndex||1};
+      if(e.dataset.src){ o.src=e.dataset.src; o.estilo=e.dataset.estilo||'recorte'; }
+      d[n]=o;
+    });
+    arranjos[modo]=d;                                   /* memória em dia */
+    fetch(MODOS[modo].rota,{method:'POST',headers:{'Content-Type':'application/json'},
+                            body:JSON.stringify(d)})
+      .then(r=>r.json()).then(()=>limpou(Object.keys(d).length))
+      .catch(()=>{eMsg.textContent='não salvou — o serve.py está rodando?'});
+  }
+  barra.querySelector('#b-salvar').onclick=salvar;
+})();
 </script>
