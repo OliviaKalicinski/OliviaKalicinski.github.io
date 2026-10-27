@@ -87,7 +87,7 @@ body{background:var(--papel);color:var(--tinta);font-family:var(--disp);
   background:var(--papelarte);
   border:14px solid transparent;
   border-image:url(casa/sala/moldura.png) 26 / 14px / 0 stretch;
-  padding:4px 7px 6px;white-space:nowrap;text-align:left;
+  padding:3px 9px 5px;white-space:nowrap;text-align:center;
   opacity:0;pointer-events:none;
   transition:opacity 240ms var(--corpo), transform 240ms var(--corpo)}
 .porta .cartao.baixo{top:calc(100% + 12px);bottom:auto;transform:translateX(-50%) translateY(-7px)}
@@ -100,8 +100,8 @@ body{background:var(--papel);color:var(--tinta);font-family:var(--disp);
 .porta:hover .cartao.esq,.porta:focus-visible .cartao.esq,
 .porta:hover .cartao.dir,.porta:focus-visible .cartao.dir,
 .porta.aberta .cartao.esq,.porta.aberta .cartao.dir{transform:translateY(-50%)}
-.cartao b{display:block;font-size:12.5px;font-weight:800;font-stretch:84%;
-  letter-spacing:.1em;text-transform:uppercase;line-height:1}
+.cartao b{display:block;font-family:var(--nome);font-size:17px;font-weight:600;
+  letter-spacing:.005em;text-transform:none;line-height:1.1}
 .cartao i{display:block;font-style:normal;margin-top:6px;font-size:11.5px;font-weight:500;
   letter-spacing:.16em;text-transform:uppercase;color:#59544a;
   border-bottom:1px solid currentColor;padding-bottom:2px;width:max-content}
@@ -526,8 +526,7 @@ function desenhaPortas(){
     b.style.top    = (c.y + c.h*p.y/100)+'px';
     b.style.width  = (c.w*p.w/100)+'px';
     b.style.height = (c.h*p.h/100)+'px';
-    b.innerHTML='<span class="cartao '+(p.lado||'cima')+'"><b>'+p.nome+
-                '</b><i>Click here</i></span>';
+    b.innerHTML='<span class="cartao '+(p.lado||'cima')+'"><b>'+p.nome+'</b></span>';
     b.setAttribute('aria-label', p.nome);
     b.addEventListener('click', ()=>abreDentro(p.id));
     palco.appendChild(b);
