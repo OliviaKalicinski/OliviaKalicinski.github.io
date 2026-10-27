@@ -2,3 +2,15 @@ rastro-config.local.md
 layout-bak/
 .DS_Store
 .claude/
+
+# a sala: só o WebP e a moldura sobem; os PNG originais e as gerações
+# descartadas somam 236 MB e ficam fora
+casa/**
+!casa/sala/
+!casa/sala/lapis.webp
+!casa/sala/cor.webp
+!casa/sala/lapis-h.webp
+!casa/sala/cor-h.webp
+!casa/sala/moldura.png
+!casa/sala/moldura.webp
+!casa/sala/molduras.webp

@@ -1,0 +1,591 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>Olivia Kalicinski</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..100,400..800&family=Fraunces:opsz,wght@9..144,400..700&display=swap" rel="stylesheet">
+<style>
+/* ---- a régua da casa, do kinetic-proto: power4.out, ~16 quadros ---- */
+:root{
+  --papel:#f3efe4; --tinta:#17150f;
+  --papelarte:#f8f0e4;        /* o creme da arte deitada */
+  --disp:"Archivo",Impact,sans-serif;
+  --nome:"Fraunces",Georgia,serif;
+  --corpo:cubic-bezier(.23,1,.32,1);
+  --dur:530ms;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden}
+body{background:var(--papel);color:var(--tinta);font-family:var(--disp);
+  -webkit-font-smoothing:antialiased}
+
+/* três faixas: nome em cima, desenho no meio, faixa embaixo */
+.pagina{position:fixed;inset:0;display:grid;
+  grid-template-rows:auto 1fr auto;
+  background:var(--papel)}
+
+.faixa{display:flex;align-items:center;justify-content:space-between;gap:14px;
+  padding:clamp(12px,2.4vh,22px) clamp(14px,4vw,34px);
+  font-size:clamp(11px,2.9vw,14px);letter-spacing:.14em;text-transform:uppercase;
+  font-weight:500}
+.faixa.alta{font-family:var(--nome);font-weight:600;font-stretch:normal;
+  font-variation-settings:"opsz" 110,"SOFT" 0,"WONK" 1;
+  font-size:clamp(27px,6.6vw,44px);letter-spacing:-.012em;line-height:1;
+  text-transform:none}
+/* quando o nome virar a letra dela, é trocar o texto do h1 por <img src="nome.png"> */
+.faixa.alta h1 img{display:block;height:clamp(30px,7.2vh,58px);width:auto;
+  image-rendering:auto;mix-blend-mode:multiply}
+.faixa.alta small{display:block;font-family:var(--disp);font-size:clamp(9.5px,2.4vw,11px);
+  font-weight:500;letter-spacing:.17em;text-transform:uppercase;opacity:.66;margin-top:7px}
+.faixa.baixa{border-top:1px solid #ddd8c9;color:#59544a;flex-wrap:wrap;
+  font-size:clamp(11px,2.8vw,12.5px);letter-spacing:.1em}
+.faixa.baixa span{white-space:nowrap}
+.faixa.baixa .cv{margin-left:clamp(10px,2.4vw,20px)}
+.faixa a{color:inherit;text-decoration:none;border-bottom:1px solid currentColor;padding-bottom:1px}
+
+/* o desenho mora no meio, inteiro, sem cortar */
+.palco{position:relative;overflow:hidden;cursor:none}
+.camada{position:absolute;inset:0;width:100%;height:100%;
+  object-fit:contain;object-position:center;display:block;
+  user-select:none;-webkit-user-drag:none}
+.lapis{z-index:1}
+.cor{z-index:2;
+  -webkit-mask-image:var(--mancha);mask-image:var(--mancha);
+  -webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;
+  -webkit-mask-size:100% 100%;mask-size:100% 100%}
+
+.h{display:block}
+.v{display:none}
+@media (max-aspect-ratio:1/1){ .h{display:none} .v{display:block}
+  :root{ --papelarte:#f0ecdc; }   /* o creme da arte em pé é outro */ }
+
+/* o cursor desenhado: um círculo de lápis que segue o ponteiro */
+.cursor{position:fixed;left:0;top:0;z-index:9;pointer-events:none;
+  width:var(--d,34px);height:var(--d,34px);margin:calc(var(--d,34px) / -2) 0 0 calc(var(--d,34px) / -2);
+  border:1.5px solid rgba(23,21,15,.55);border-radius:50%;
+  transform:translate(var(--x,-100px), var(--y,-100px));
+  transition:width var(--dur) var(--corpo), height var(--dur) var(--corpo),
+             margin var(--dur) var(--corpo), border-color var(--dur) var(--corpo);
+  opacity:0}
+.cursor.on{opacity:1}
+.cursor::after{content:"";position:absolute;left:50%;top:50%;width:3px;height:3px;
+  margin:-1.5px 0 0 -1.5px;border-radius:50%;background:rgba(23,21,15,.6)}
+/* sobre algo clicável o círculo abre e ganha anel duplo */
+.cursor.porta{--d:66px;border-color:rgba(23,21,15,.8)}
+.cursor.porta::before{content:"";position:absolute;inset:5px;border:1px solid rgba(23,21,15,.3);
+  border-radius:50%}
+
+/* as portas: áreas clicáveis por cima do desenho */
+.porta{position:absolute;z-index:3;border:0;background:none;padding:0;cursor:none;
+  font:inherit;color:inherit;min-width:44px;min-height:44px}
+/* a janelinha: só aparece quando o ponteiro chega */
+.porta .cartao{position:absolute;left:50%;bottom:calc(100% + 12px);
+  transform:translateX(-50%) translateY(7px);
+  background:var(--papelarte);
+  border:14px solid transparent;
+  border-image:url(casa/sala/moldura.png) 26 / 14px / 0 stretch;
+  padding:4px 7px 6px;white-space:nowrap;text-align:left;
+  opacity:0;pointer-events:none;
+  transition:opacity 240ms var(--corpo), transform 240ms var(--corpo)}
+.porta .cartao.baixo{top:calc(100% + 12px);bottom:auto;transform:translateX(-50%) translateY(-7px)}
+.porta .cartao.esq{right:calc(100% + 12px);left:auto;top:50%;bottom:auto;
+  transform:translateY(-50%) translateX(7px)}
+.porta .cartao.dir{left:calc(100% + 12px);top:50%;bottom:auto;
+  transform:translateY(-50%) translateX(-7px)}
+.porta:hover .cartao,.porta:focus-visible .cartao,
+.porta.aberta .cartao{opacity:1;transform:translateX(-50%)}
+.porta:hover .cartao.esq,.porta:focus-visible .cartao.esq,
+.porta:hover .cartao.dir,.porta:focus-visible .cartao.dir,
+.porta.aberta .cartao.esq,.porta.aberta .cartao.dir{transform:translateY(-50%)}
+.cartao b{display:block;font-size:12.5px;font-weight:800;font-stretch:84%;
+  letter-spacing:.1em;text-transform:uppercase;line-height:1}
+.cartao i{display:block;font-style:normal;margin-top:6px;font-size:11.5px;font-weight:500;
+  letter-spacing:.16em;text-transform:uppercase;color:#59544a;
+  border-bottom:1px solid currentColor;padding-bottom:2px;width:max-content}
+
+
+.porta:focus-visible{outline:2px solid var(--tinta);outline-offset:3px}
+
+.marcadas .porta{box-shadow:inset 0 0 0 1.5px rgba(220,0,90,.8)}
+
+/* o dentro do quadrado: papel por cima, com a sala ainda aparecendo atrás */
+.dentro{position:absolute;inset:0;z-index:12;overflow-y:auto;
+  background:rgba(243,239,228,.94);
+  padding:clamp(20px,5vh,46px) clamp(20px,6vw,56px) clamp(30px,6vh,60px);
+  opacity:0;visibility:hidden;pointer-events:none;
+  transition:opacity var(--dur) var(--corpo), visibility 0s linear var(--dur)}
+.dentro.no{opacity:1;visibility:visible;pointer-events:auto;
+  transition:opacity var(--dur) var(--corpo), visibility 0s}
+.dentro .folha{max-width:52ch;margin:0 auto}
+.dentro h2{font-family:var(--nome);font-weight:650;
+  font-variation-settings:"opsz" 120,"WONK" 1;line-height:1.02;letter-spacing:-.015em;
+  font-size:clamp(32px,8vw,56px);margin:0 0 clamp(16px,3vh,26px)}
+.dentro .folha.larga{max-width:72ch}
+.dentro h3{font-family:var(--disp);font-weight:700;font-stretch:88%;
+  font-size:14px;letter-spacing:.17em;text-transform:uppercase;color:#6b6558;
+  margin:clamp(26px,4.5vh,40px) 0 clamp(10px,1.6vh,14px);
+  padding-bottom:7px;border-bottom:1px solid #ddd6c5}
+.dentro .linha{display:grid;grid-template-columns:9em 1fr;gap:clamp(10px,2.4vw,22px);
+  margin:0 0 clamp(14px,2.4vh,20px)}
+.dentro .quando{font-family:var(--disp);font-size:11.5px;letter-spacing:.09em;
+  text-transform:uppercase;color:#635e52;padding-top:6px;line-height:1.45}
+.dentro .o-que b{display:block;font-family:var(--nome);font-weight:600;
+  font-size:clamp(18px,4.4vw,23px);line-height:1.15;margin-bottom:5px}
+.dentro .o-que p{margin:0}
+.dentro .falta{color:#a59e8d;font-style:italic}
+.dentro .chapeu{font-family:var(--nome);font-weight:500;font-size:clamp(16px,4vw,20px);
+  line-height:1.42;color:#4b4639;margin:0 0 clamp(10px,2vh,18px)}
+.dentro ul{margin:0 0 1.05em;padding:0;list-style:none}
+.dentro ul li{position:relative;padding-left:1.1em;margin-bottom:.44em;
+  font-family:var(--disp);font-size:clamp(15px,3.6vw,16px);line-height:1.55;color:#3a362d}
+.dentro ul li::before{content:"–";position:absolute;left:0;color:#8b8577}
+.dentro .fecho{font-family:var(--nome);font-weight:400;font-size:clamp(15px,3.8vw,18px);
+  line-height:1.5;color:#4b4639;margin:.2em 0 0}
+.dentro a{color:inherit;text-decoration:none;border-bottom:1px solid #b9b2a1}
+.dentro a:hover{border-color:currentColor}
+.dentro .onde{font-family:var(--disp);font-size:11px;letter-spacing:.12em;
+  text-transform:uppercase;color:#635e52;margin:-2px 0 9px}
+@media (max-width:620px){ .dentro .linha{grid-template-columns:1fr;gap:4px} }
+.dentro p{font-family:var(--disp);font-weight:400;font-stretch:normal;
+  font-size:clamp(14px,3.6vw,17px);line-height:1.62;color:#3a362d;margin:0 0 1.05em;
+  letter-spacing:0;text-transform:none}
+.volta{display:inline-flex;align-items:center;gap:8px;background:none;border:0;padding:0;
+  font-family:var(--disp);font-size:11px;letter-spacing:.17em;text-transform:uppercase;
+  color:#59544a;cursor:pointer;margin-bottom:clamp(20px,4vh,38px)}
+.volta:hover{color:var(--tinta)}
+
+@media (hover:none){ .palco{cursor:auto} .cursor{display:none} .porta{cursor:pointer} }
+
+@media (prefers-reduced-motion:reduce){
+  .cor{-webkit-mask-image:none;mask-image:none}
+  .cursor{transition:none}
+}
+</style>
+
+<div class="pagina">
+  <header class="faixa alta">
+    <h1 style="margin:0;font:inherit"><img src="nome.png" alt="Olivia Kalicinski">
+      <small>growth · branding · code</small></h1>
+  </header>
+
+  <div class="palco" id="palco" style="--mancha:radial-gradient(circle 0px at 50% 50%, #000 58%, transparent 100%)">
+    <img class="camada lapis h" src="casa/sala/lapis-h.webp" alt="Olivia's work corner, drawn in pencil">
+    <img class="camada cor   h" src="casa/sala/cor-h.webp"   alt="">
+    <img class="camada lapis v" src="casa/sala/lapis.webp"   alt="Olivia's work corner, drawn in pencil">
+    <img class="camada cor   v" src="casa/sala/cor.webp"     alt="">
+
+    <article class="dentro" id="dentro" aria-hidden="true">
+      <div class="folha">
+        <button class="volta" id="volta" type="button">← Back to the room</button>
+        <h2 id="dentro-titulo"></h2>
+        <div id="dentro-texto"></div>
+      </div>
+    </article>
+  </div>
+
+  <div class="cursor" id="cursor"></div>
+
+  <template id="cv-html">
+    <p class="chapeu">Head of Growth @ Comida de Dragão (Lets Fly). Paid acquisition, lifecycle
+      and CRO for DTC — and I build the stack too: React, SQL, agent automation.</p>
+
+    <h3>Summary</h3>
+    <p>I own the full acquisition P&amp;L of a DTC pet-food brand — paid media, creators, CRM
+      and CRO — and I build the system that runs it.</p>
+    <p>In practice:</p>
+    <ul>
+      <li>I lead a team of four and the company's marketing objective: CAC, checkout close
+        rate, cart recovery, 90-day repurchase and winning creator videos.</li>
+      <li>I found one ad driving 29 of 63 purchases on 13% of spend. Fixing its destination
+        moved the account from 34 to 40 purchases and CPA from R$102 to R$95 in a single week.</li>
+      <li>I scaled Meta spend 45% while ROAS rose from 1.46 to 1.51 and purchases grew from
+        45 to 67.</li>
+      <li>I replaced ROAS with contribution margin per landing page as the budget rule, so
+        every page carries its own CPA ceiling.</li>
+      <li>I build what I run: 20+ landing pages in a React/TypeScript portal (564 commits),
+        dashboards, GA4 tracking and scheduled agent automations.</li>
+    </ul>
+    <p>Before this: six years at a family-owned cheese company, where I created the trade
+      marketing department and led a team of 14, and brand management at L'Oréal (Garnier).</p>
+    <p>From 2021 to 2025 I worked as a visual artist — ceramics, photography and installation,
+      awarded at Festival do Minuto 2024. Not a detour: it is where the eye and the
+      storytelling come from.</p>
+    <p class="fecho">I'm looking for a remote Head of Growth or Growth Lead role with an
+      international team.</p>
+
+    <h3>Experience</h3>
+
+    <div class="linha">
+      <div class="quando">January 2025<br>— present<br>1 yr 10 mos</div>
+      <div class="o-que">
+        <b>Head of Growth · Lets Fly | Alimento que regenera</b>
+        <p class="onde">Rio de Janeiro, Brazil</p>
+        <p>Comida de Dragão is the DTC pet-food brand of Lets Fly, a Brazilian biotech that
+          converts organic waste into insect protein (Black Soldier Fly). I own the brand's
+          full acquisition P&amp;L and build the system that runs it.</p>
+        <ul>
+          <li>Own the company's marketing objective and its five key results: CAC, checkout
+            close rate, cart recovery, 90-day cohort repurchase and winning creator videos</li>
+          <li>Lead a team of four across paid media, creative, creators and CRM, with weekly
+            one-on-ones built on each person's own numbers</li>
+          <li>Run 18 active fronts: Meta, Google and TikTok Ads, creators, Instagram, WhatsApp
+            and email lifecycle, marketplaces, CRO, checkout and pricing</li>
+          <li>Build and maintain 20+ landing pages in a React/TypeScript portal (564 commits),
+            plus dashboards, GA4/UTM tracking and scheduled agent automations</li>
+          <li>Set the company's budget rule: contribution margin per landing page instead of
+            ROAS, so every page carries its own CPA ceiling</li>
+          <li>Found one ad driving 29 of 63 purchases on 13% of spend; fixing its destination
+            moved the account from 34 to 40 purchases and CPA from R$102 to R$95 in a single
+            week</li>
+          <li>Scaled Meta spend 45% while ROAS rose from 1.46 to 1.51 and purchases grew from
+            45 to 67</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="linha">
+      <div class="quando">January 2021<br>— February 2025<br>4 yrs 2 mos</div>
+      <div class="o-que">
+        <b>Visual Artist · Photography, Ceramics, Installation</b>
+        <p class="onde">Independent · Miguel Pereira and Rio de Janeiro, Brazil</p>
+        <p>Independent practice in ceramics, photography, printmaking and installation. I fire
+          clay in open pits together with electronic waste, organic matter and discarded
+          materials — work about the cycle of life, death and life, and about what human
+          intervention does to the land.</p>
+        <ul>
+          <li>Award, Festival do Minuto 2024 — Nano Minuto category, for the short film
+            “Incêndio”</li>
+          <li>Casero Art Residency 2024 — ten days in the Atlantic Forest, Itatiaia National
+            Park, curated by Fernanda Lopes and Bruno Miguel</li>
+          <li>Group shows at Casa da Escada Colorida (2023) and EAV Parque Lage (2021)</li>
+          <li>Ongoing critical mentorships with André Penteado (full scholarship) and Bruno
+            Miguel</li>
+          <li>Commissioned photography and video for brands and private clients</li>
+        </ul>
+        <p class="fecho">This is where my eye comes from. It taught me to turn complex ideas
+          into images and narratives, and to judge the work by what the material actually does
+          rather than by what I intended.</p>
+      </div>
+    </div>
+
+    <div class="linha">
+      <div class="quando">April 2015<br>— May 2021<br>6 yrs 2 mos</div>
+      <div class="o-que">
+        <b>Project &amp; Marketing Manager · Sítio Solidão</b>
+        <p class="onde">Rio de Janeiro and region, Brazil</p>
+        <p>Family-owned artisanal cheese company founded in 1987, supplying Rio de Janeiro and
+          the surrounding region.</p>
+        <ul>
+          <li>Created the trade marketing department from scratch and led a team of 14</li>
+          <li>Managed key retail accounts, including Zona Sul and Hortifruti</li>
+          <li>Led the company's professionalisation: implemented management systems across
+            departments and rebuilt logistics and administrative workflows</li>
+          <li>Built the marketing, communication and PR strategy, from positioning to point
+            of sale</li>
+        </ul>
+        <p class="fecho">Six years of operations, retail and team leadership inside a growing
+          business — and my first lesson that a brand is decided at the shelf, not in the deck.</p>
+      </div>
+    </div>
+
+    <div class="linha">
+      <div class="quando">April 2014<br>— March 2015<br>1 yr</div>
+      <div class="o-que">
+        <b>Trainee · Airswift</b>
+        <p class="onde">Rio de Janeiro, Brazil</p>
+        <p>Global recruitment company for Oil &amp; Gas projects.</p>
+        <ul>
+          <li>Recruited specialised professionals across project stages: screening, interviews
+            and face-to-face client meetings</li>
+          <li>Trained in Houston, Texas, in commercial, sales and recruitment programmes,
+            working with global teams and clients</li>
+        </ul>
+        <p class="fecho">My first exposure to international business and to commercial work.</p>
+      </div>
+    </div>
+
+    <div class="linha">
+      <div class="quando">February 2014<br>— March 2014<br>2 mos</div>
+      <div class="o-que">
+        <b>Trainee · Airswift</b>
+        <p class="onde">Houston, Texas, United States</p>
+        <ul>
+          <li>Oil &amp; Gas training</li>
+          <li>Commercial training</li>
+          <li>Sales training</li>
+          <li>Recruitment training</li>
+          <li>Live recruiting</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="linha">
+      <div class="quando">October 2012<br>— April 2013<br>7 mos</div>
+      <div class="o-que">
+        <b>DMI Intern, Skincare &amp; Deodorants for Garnier · L'Oréal</b>
+        <p>International marketing development (DMI) for Garnier skincare and deodorants.</p>
+        <ul>
+          <li>Developed new product concepts with the global marketing team</li>
+          <li>Ran packaging development briefings end to end</li>
+          <li>Contributed to advertising briefings and campaign development</li>
+          <li>Conducted market analysis and consumer research</li>
+        </ul>
+        <p class="fecho">My first school in brand management and consumer behaviour, inside a
+          global marketing operation.</p>
+      </div>
+    </div>
+
+    <div class="linha">
+      <div class="quando">January 2010<br>— July 2010<br>7 mos</div>
+      <div class="o-que">
+        <b>Trainee · Panorama Consultoria Internacional — Empresa Júnior</b>
+        <p class="onde">Rio de Janeiro, Brazil</p>
+        <p>Student-run consulting firm focused on international business projects.</p>
+        <ul>
+          <li>Managed relationships with client companies and institutional partners</li>
+          <li>Contributed to international consulting projects from planning to execution</li>
+          <li>Supported internal marketing initiatives and communication strategies</li>
+        </ul>
+        <p class="fecho">Early exposure to consulting mindset, project management and
+          client-facing work.</p>
+      </div>
+    </div>
+
+    <h3>Education</h3>
+    <div class="linha">
+      <div class="quando">September 2024</div>
+      <div class="o-que"><b>Casero Art Residency</b><p>Mentorship.</p></div>
+    </div>
+    <div class="linha">
+      <div class="quando">September 2024</div>
+      <div class="o-que"><b>Art Residency · Casa da Escada Colorida</b>
+        <p>Mentorship · scholarship recipient.</p></div>
+    </div>
+    <div class="linha">
+      <div class="quando">2024</div>
+      <div class="o-que"><b>Critical mentorship with André Penteado</b>
+        <p>Photography · full scholarship.</p></div>
+    </div>
+    <div class="linha">
+      <div class="quando">2022</div>
+      <div class="o-que"><b>School of Visual Arts at Parque Lage</b>
+        <p>Critical mentorship with Bruno Miguel.</p></div>
+    </div>
+    <div class="linha">
+      <div class="quando">2021</div>
+      <div class="o-que"><b>School of Visual Arts at Parque Lage</b>
+        <p>Languages of Space and Time: Return to the Physical World.</p></div>
+    </div>
+    <div class="linha">
+      <div class="quando">2018 — 2020</div>
+      <div class="o-que"><b>Ceramics mentorship with Vera Machado</b></div>
+    </div>
+
+    <h3>Top skills</h3>
+    <p>Performance marketing · React.js · Google Analytics</p>
+
+    <h3>Certifications</h3>
+    <ul>
+      <li>Understanding Consumer Behavior</li>
+      <li>Melhor Trainee</li>
+      <li>Social Media Marketing for Small Business</li>
+      <li>Leading and Working in Teams</li>
+      <li>Retail Index, Nielsen</li>
+    </ul>
+
+    <h3>Languages</h3>
+    <p>Portuguese (native or bilingual) · English (full professional) ·
+      German (professional working) · Spanish (elementary)</p>
+
+    <h3>Contact</h3>
+    <p><a href="mailto:olivia.kalicinski@gmail.com">olivia.kalicinski@gmail.com</a><br>
+      <a href="https://www.linkedin.com/in/olivia-kalicinski/" target="_blank"
+         rel="noopener">linkedin.com/in/olivia-kalicinski</a><br>
+      Miguel Pereira · Rio de Janeiro, Brazil</p>
+  </template>
+
+  <footer class="faixa baixa">
+    <span>Rio de Janeiro</span>
+    <span><a href="mailto:olivia.kalicinski@gmail.com">olivia.kalicinski@gmail.com</a>
+      <a class="cv" href="#cv" id="link-cv">CV</a>
+      <a class="cv" href="https://www.linkedin.com/in/olivia-kalicinski/"
+         target="_blank" rel="noopener">LinkedIn</a></span>
+  </footer>
+</div>
+
+<script>
+const palco=document.getElementById('palco');
+const R=()=>Math.min(palco.clientWidth,palco.clientHeight)*0.34;
+function mancha(xp,yp,r){
+  palco.style.setProperty('--mancha',
+    `radial-gradient(circle ${r}px at ${xp}% ${yp}%, #000 58%, transparent 100%)`);
+}
+const cursor=document.getElementById('cursor');
+function onde(e){
+  const b=palco.getBoundingClientRect();
+  mancha(((e.clientX-b.left)/b.width)*100, ((e.clientY-b.top)/b.height)*100, R());
+  cursor.style.setProperty('--x', e.clientX+'px');
+  cursor.style.setProperty('--y', e.clientY+'px');
+  cursor.classList.add('on');
+  /* abre quando estiver sobre algo que leva a algum lugar */
+  const alvo=document.elementFromPoint(e.clientX,e.clientY);
+  cursor.classList.toggle('porta', !!(alvo && alvo.closest('[data-porta]')));
+}
+palco.addEventListener('pointermove', onde);
+palco.addEventListener('pointerdown', onde);
+palco.addEventListener('pointerleave', ()=>{ mancha(50,50,0); cursor.classList.remove('on'); });
+
+/* ---- o texto de cada porta ---- */
+const DENTRO={
+  codigo:{ titulo:'The code', texto:[
+    'I taught myself to write code the way I learn everything else: by needing it first.',
+    'I build what I run — a React/TypeScript portal with 20+ landing pages (564 commits), '+
+    'dashboards, GA4 and UTM tracking, and the scheduled agent automations that read the '+
+    'numbers every morning. Nobody hired a developer. I stopped waiting for one.' ]},
+
+  farm:{ titulo:'The farm', texto:[
+    'Sítio Solidão, the family artisanal cheese company, founded 1987. Six years there, '+
+    'from 2015 to 2021.',
+    'I created the trade marketing department from scratch and led a team of fourteen. '+
+    'I managed the key retail accounts and rebuilt the logistics and administrative '+
+    'workflows along the way.',
+    'It is where I learned that a brand is decided at the shelf, not in the deck.' ]},
+
+  ceramica:{ titulo:'The pottery', texto:[
+    'I fire clay in open pits together with electronic waste, organic matter and discarded '+
+    'materials. The work is about the cycle of life, death and life, and about what human '+
+    'intervention does to the land.',
+    'Ceramics mentorship with Vera Machado, 2018 to 2020. Group shows at Casa da Escada '+
+    'Colorida and at EAV Parque Lage.' ]},
+
+  foto:{ titulo:'The photography', texto:[
+    'Four years as a full-time visual artist, 2021 to 2025 — photography, printmaking and '+
+    'installation, alongside the clay.',
+    'Award at Festival do Minuto 2024, Nano Minuto category, for the short film “Incêndio”. '+
+    'Casero Art Residency 2024, ten days in the Atlantic Forest. Commissioned photography '+
+    'and video for brands and private clients.',
+    'Not a detour. It is where the eye and the storytelling come from.' ]},
+
+  violao:{ titulo:'The guitar', texto:['Still writing this one.']},
+
+  cv:{ titulo:'Curriculum vitae', larga:true, molde:'cv-html' }
+};
+const dentro=document.getElementById('dentro');
+function abreDentro(id){
+  const d=DENTRO[id]; if(!d) return;
+  document.getElementById('dentro-titulo').textContent=d.titulo;
+  document.getElementById('dentro-texto').innerHTML =
+    d.molde ? document.getElementById(d.molde).innerHTML
+            : d.texto.map(t=>'<p>'+t+'</p>').join('');
+  dentro.querySelector('.folha').classList.toggle('larga', !!d.larga);
+  dentro.classList.add('no'); dentro.setAttribute('aria-hidden','false');
+  dentro.scrollTop=0;
+  document.getElementById('volta').focus();
+}
+function fechaDentro(){
+  dentro.classList.remove('no'); dentro.setAttribute('aria-hidden','true');
+}
+document.getElementById('volta').addEventListener('click', fechaDentro);
+document.getElementById('link-cv').addEventListener('click', e=>{ e.preventDefault(); abreDentro('cv'); });
+addEventListener('keydown', e=>{ if(e.key==='Escape') fechaDentro(); });
+
+/* ---- as portas: caixa em % da IMAGEM, não do palco ---- */
+const PORTAS={
+  v:[ {id:'codigo', x:33,y:43,w:30,h:12, nome:'The code',        lado:'cima'},
+      {id:'foto',   x:50,y:53.5,w:8,h:4.5, nome:'The photography', lado:'baixo'},
+      {id:'farm',   x:11,y:17,w:51,h:26, nome:'The farm',        lado:'dir'},
+      {id:'ceramica',x:1,y:51,w:11,h:18, nome:'The pottery',     lado:'dir'},
+      {id:'violao', x:82,y:50,w:10,h:25, nome:'The guitar',      lado:'esq'} ],
+  h:[ {id:'codigo', x:40,y:38,w:22,h:15, nome:'The code',        lado:'cima'},
+      {id:'foto',   x:54,y:52,w:6.5,h:5, nome:'The photography', lado:'baixo'},
+      {id:'farm',   x:25,y:3, w:37,h:33, nome:'The farm',        lado:'esq'},
+      {id:'ceramica',x:17,y:50,w:9,h:20, nome:'The pottery',     lado:'esq'},
+      {id:'violao', x:74,y:47,w:9, h:33, nome:'The guitar',      lado:'dir'} ]
+};
+function orientacao(){ return matchMedia('(max-aspect-ratio:1/1)').matches ? 'v' : 'h'; }
+function imagemVisivel(){ return palco.querySelector('.lapis.'+orientacao()); }
+
+/* com object-fit:contain a imagem é menor que o palco: achar a caixa real */
+function caixaDaImagem(){
+  const im=imagemVisivel(), p=palco.getBoundingClientRect();
+  const rw=im.naturalWidth||1024, rh=im.naturalHeight||1536;
+  const k=Math.min(p.width/rw, p.height/rh);
+  const w=rw*k, h=rh*k;
+  return {x:(p.width-w)/2, y:(p.height-h)/2, w, h};
+}
+function desenhaPortas(){
+  palco.querySelectorAll('.porta').forEach(n=>n.remove());
+  const c=caixaDaImagem();
+  PORTAS[orientacao()].forEach(p=>{
+    const b=document.createElement('button');
+    b.className='porta'; b.dataset.porta=p.id; b.type='button';
+    b.style.left   = (c.x + c.w*p.x/100)+'px';
+    b.style.top    = (c.y + c.h*p.y/100)+'px';
+    b.style.width  = (c.w*p.w/100)+'px';
+    b.style.height = (c.h*p.h/100)+'px';
+    b.innerHTML='<span class="cartao '+(p.lado||'cima')+'"><b>'+p.nome+
+                '</b><i>Click here</i></span>';
+    b.setAttribute('aria-label', p.nome);
+    b.addEventListener('click', ()=>abreDentro(p.id));
+    palco.appendChild(b);
+  });
+}
+if(location.hash==='#marcadas') palco.classList.add('marcadas');
+addEventListener('resize', desenhaPortas);
+imagemVisivel().complete ? desenhaPortas() : imagemVisivel().addEventListener('load', desenhaPortas);
+addEventListener('load', desenhaPortas);
+
+/* no celular não há dedo pairando: a sala visita um objeto de cada vez,
+   acende a cor nele e abre a moldura para a pessoa apertar */
+if(!matchMedia('(hover:hover)').matches || location.hash.startsWith('#toque')) addEventListener('load', ()=>{
+  const suave = t => 1-Math.pow(1-t,4);     /* power4.out, a régua da casa */
+  const MOVE=530, PAUSA=2100;               /* 16 quadros para andar, dois segundos parado */
+  let i=-1, de={x:50,y:50}, para={x:50,y:50}, t0=0, aberta=null, laco=0;
+  const fixo=(location.hash.match(/#toque=(\d+)/)||[])[1];   /* só para conferência */
+  if(fixo!==undefined) i=parseInt(fixo)-1;
+
+  function centroDe(p){
+    const c=caixaDaImagem(), b=palco.getBoundingClientRect();
+    return { x:(c.x + c.w*(p.x+p.w/2)/100)/b.width*100,
+             y:(c.y + c.h*(p.y+p.h/2)/100)/b.height*100 };
+  }
+  function proxima(agora){
+    const ps=PORTAS[orientacao()];
+    i=(i+1)%ps.length;
+    de={x:para.x,y:para.y}; para=centroDe(ps[i]); t0=agora;
+    if(aberta) aberta.classList.remove('aberta');
+    aberta=palco.querySelector('.porta[data-porta="'+ps[i].id+'"]');
+  }
+  function fecha(){ if(aberta){ aberta.classList.remove('aberta'); aberta=null; } }
+
+  function anda(agora){
+    if(!t0) proxima(agora);
+    const dt=fixo!==undefined ? MOVE : agora-t0;
+    if(dt<MOVE){
+      const k=suave(dt/MOVE);
+      mancha(de.x+(para.x-de.x)*k, de.y+(para.y-de.y)*k, R()*0.72);
+    }else{
+      mancha(para.x, para.y, R()*0.72);
+      if(aberta) aberta.classList.add('aberta');
+      if(dt>MOVE+PAUSA && fixo===undefined) proxima(agora);
+    }
+    laco=requestAnimationFrame(anda);
+  }
+  function siga(){ if(!laco){ t0=0; laco=requestAnimationFrame(anda); } }
+  function pare(){ cancelAnimationFrame(laco); laco=0; fecha(); }
+  siga();
+
+  /* uma caixa de cada vez: quando um ponteiro entra, a visita para na hora,
+     para não ficar a caixa da visita mais a caixa do objeto apontado */
+  palco.addEventListener('pointermove', e=>{ if(e.pointerType!=='touch') pare(); });
+  palco.addEventListener('mousemove', pare);
+  palco.addEventListener('pointerdown', e=>{
+    const alvo = e.target.closest ? e.target.closest('.porta') : null;
+    pare();
+    if(alvo){ alvo.classList.add('aberta'); aberta=alvo; } else siga();
+  });
+});
+</script>
