@@ -418,7 +418,7 @@ body{background:var(--papel);color:var(--tinta);font-family:var(--disp);
 
 <script>
 const palco=document.getElementById('palco');
-const R=()=>Math.min(palco.clientWidth,palco.clientHeight)*0.34;
+const R=()=>Math.min(palco.clientWidth,palco.clientHeight)*0.26;
 function mancha(xp,yp,r){
   palco.style.setProperty('--mancha',
     `radial-gradient(circle ${r}px at ${xp}% ${yp}%, #000 58%, transparent 100%)`);
@@ -565,9 +565,9 @@ if(!matchMedia('(hover:hover)').matches || location.hash.startsWith('#toque')) a
     const dt=fixo!==undefined ? MOVE : agora-t0;
     if(dt<MOVE){
       const k=suave(dt/MOVE);
-      mancha(de.x+(para.x-de.x)*k, de.y+(para.y-de.y)*k, R()*0.72);
+      mancha(de.x+(para.x-de.x)*k, de.y+(para.y-de.y)*k, R()*0.95);
     }else{
-      mancha(para.x, para.y, R()*0.72);
+      mancha(para.x, para.y, R()*0.95);
       if(aberta) aberta.classList.add('aberta');
       if(dt>MOVE+PAUSA && fixo===undefined) proxima(agora);
     }
