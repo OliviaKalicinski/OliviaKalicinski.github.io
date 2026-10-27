@@ -45,7 +45,10 @@ body{background:var(--osso);color:var(--tinta);font-family:var(--disp);
    organização nunca se desmancha.                                            */
 .caixa-mural{position:relative;margin:auto}
 .mural{position:absolute;left:0;top:0;width:1380px;height:862px;
-  transform-origin:0 0}
+  transform-origin:0 0;
+  /* a moldura corta o que passa dela: assim a peça que sangra na borda
+     fica igual em qualquer janela, em vez de aparecer só nas largas */
+  overflow:hidden}
 
 /* peça: papel sobre papel. a sombra é o que diz que uma está em cima da outra */
 .p{position:absolute;background:#fbf9f3;padding:.9%;
