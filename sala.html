@@ -616,12 +616,18 @@ palco.addEventListener('pointerleave', ()=>{ mancha(50,50,0); cursor.classList.r
 
 /* ---- o texto de cada porta ---- */
 const DENTRO={
-  codigo:{ titulo:'Work', texto:[
-    'I taught myself to code because the work needed it before anyone was going to hire someone to do it.',
-    'What I run, I built: a React/TypeScript portal with 20+ landing pages and 564 commits, the Shopify storefront, the dashboards that read them, the GA4 and UTM tracking end to end, and scheduled agents that pull the numbers every morning and flag what moved.',
-    'The reason that matters is not the code. It is that I can change the measurement and the thing being measured on the same afternoon.',
-    'An example. A campaign landing page was converting at 6.7% against 0.9% for the product page taking most of the budget — and the checkout credited it with two orders out of fourteen. The number could not be true. The button was routing through an intermediate page that rewrote the source parameter, so nine of fourteen orders were filed under the wrong name. I rebuilt the link path and the fix shipped with the next campaign.',
-    'A bigger one. The purchase event was firing when the order was created, not when it was paid. Every platform ROAS in the company was inflated by about 12% — measured across 250 orders: 10% cancelled, 2% refunded. Discounting that is now a house rule before any budget decision.',
+  codigo:{ titulo:'Work', longo:true, texto:[
+    'Comida de Drag\u00e3o is a Brazilian pet-food brand made from insect protein: the parent company raises black soldier fly larvae on organic waste and turns them into food for dogs, cats and reptiles. Nearly everyone in that industry sells B2B. Selling it straight to the people who own the animals is a category that did not exist here.',
+    'In January 2025, when I arrived, 87% of the company\u2019s revenue came from a handful of those B2B contracts. Today direct-to-consumer and resale are two thirds of it. I built that route \u2014 the brand did not exist, and I led it to market.',
+    'I am its Head of Growth. I own the acquisition P&L, I lead a team of four, and I built the system that reads it.',
+    'What I am proudest of is measurement I fixed rather than growth I claimed.',
+    'The purchase event was firing when an order was created, not when it was paid. Every platform ROAS in the company was inflated by about 12% \u2014 measured across 250 orders: 10% cancelled, 2% refunded.',
+    'The Meta click id was being dropped in the jump between domains, so only 57% of purchases came back identified; the rest returned as modelling. About 35% of landing-page traffic was not human \u2014 desktop sessions lasting just over a second, converting at zero, dragging down the denominator of every page. And the source of a sale was frozen at the first click and never overwritten, so the channel spending the money always looked smaller than it was.',
+    'One channel died for 75 days without an error anywhere. A platform migration stopped the shop emitting its \u201corder complete\u201d event, and the review tool was waiting on that event to fire fourteen days later. It sent nothing, received nothing, and every dashboard said \u201cenabled\u201d. That became a standing rule: configured and working are different claims, and only the counter settles it.',
+    'The creator programme is built in-house, with no agency: 2,310 creators approached, 233 active partners today, across 25 states. Measuring it taught me two things. The channel grows by width, not height \u2014 each creator sells one to three times a week, steadily, and it tripled when four people selling became sixteen, not because anyone got better. And counting it by coupon underestimated it by an order of magnitude: one creator had 107 purchases attributed on the platform against 26 orders carrying her code.',
+    'I replaced return on ad spend with contribution margin per landing page as the budget rule, so each page carries its own cost ceiling, drawn from its real ticket rather than its list price. Under the right ceiling, an ad that had been dismissed as too expensive turned out to be the second most profitable in the account.',
+    'An ad set born big does not learn. The ones that start small bring their cost per thousand impressions down by a third within a week; the ones that start ten times larger stay flat or climb. If the cost has not moved by the fifth day, I stop it rather than feed it.',
+    'What I run, I built: a React/TypeScript portal with 20+ landing pages and 564 commits, the Shopify storefront, the dashboards, the GA4 and UTM tracking implementation, and about 36 scheduled agents that read the accounts every morning and flag what moved.',
     'Most growth work is reading numbers. Some of it is finding out the numbers are wrong.' ]},
 
   farm:{ titulo:'Farm', texto:[
@@ -719,7 +725,7 @@ function abreDentro(id){
                 }).join('')+'</div>' : '');
   /* pagina fixa, menos as duas que precisam rolar */
   dentro.classList.toggle('revista', !d.molde && id!=='eu');
-  dentro.classList.toggle('com-galeria', !!d.galeria);
+  dentro.classList.toggle('com-galeria', !!(d.galeria||d.longo));
   dentro.querySelector('.folha').classList.toggle('larga', !!d.larga);
   dentro.classList.add('no'); dentro.setAttribute('aria-hidden','false');
   document.querySelector('.pagina').classList.add('lendo');
