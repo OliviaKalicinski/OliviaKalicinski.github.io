@@ -9,8 +9,10 @@
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..100,400..800&family=Fraunces:opsz,wght@9..144,400..700&display=swap" rel="stylesheet">
 <style>
 /* ---- a régua da casa, do kinetic-proto: power4.out, ~16 quadros ---- */
+@font-face{font-family:"Letra Olivia";src:url("LetraOlivia-Regular.otf") format("opentype");
+  font-display:swap}
 :root{
-  --papel:#f3efe4; --tinta:#17150f;
+  --papel:#fcfcfb; --tinta:#17150f;
   --papelarte:#f8f0e4;        /* o creme da arte deitada */
   --disp:"Archivo",Impact,sans-serif;
   --nome:"Fraunces",Georgia,serif;
@@ -30,14 +32,15 @@ body{background:var(--papel);color:var(--tinta);font-family:var(--disp);
 .faixa{display:flex;align-items:center;justify-content:space-between;gap:14px;
   padding:clamp(12px,2.4vh,22px) clamp(14px,4vw,34px);
   font-size:clamp(11px,2.9vw,14px);letter-spacing:.14em;text-transform:uppercase;
-  font-weight:500}
+  font-weight:500;transition:opacity var(--dur) var(--corpo)}
+.faixa.alta{padding-top:clamp(26px,5.6vh,54px)}
 .faixa.alta{font-family:var(--nome);font-weight:600;font-stretch:normal;
   font-variation-settings:"opsz" 110,"SOFT" 0,"WONK" 1;
   font-size:clamp(27px,6.6vw,44px);letter-spacing:-.012em;line-height:1;
   text-transform:none}
 /* quando o nome virar a letra dela, é trocar o texto do h1 por <img src="nome.png"> */
-.faixa.alta h1 img{display:block;height:clamp(24px,5.6vh,45px);width:auto;
-  image-rendering:auto;mix-blend-mode:multiply}
+.faixa.alta h1{margin:0;font-family:"Letra Olivia",cursive;font-weight:400;
+  font-size:clamp(22px,4.8vh,38px);line-height:1;letter-spacing:0;color:#3a362d}
 .faixa.alta small{display:block;font-family:var(--disp);font-size:clamp(9.5px,2.4vw,11px);
   font-weight:500;letter-spacing:.17em;text-transform:uppercase;opacity:.66;margin-top:12px}
 .faixa.baixa{border-top:1px solid #ddd8c9;color:#59544a;flex-wrap:wrap;
@@ -51,11 +54,21 @@ body{background:var(--papel);color:var(--tinta);font-family:var(--disp);
 .camada{position:absolute;inset:0;width:100%;height:100%;
   object-fit:contain;object-position:center;display:block;
   user-select:none;-webkit-user-drag:none}
-.lapis{z-index:1}
+/* a sala se dissolve no papel em vez de cortar em reta. A camada de cor
+   soma duas mascaras: a mancha do cursor e esse esmaecimento de borda. */
+:root{ --borda:radial-gradient(ellipse 74% 78% at 50% 50%, #000 30%, transparent 100%); }
+.lapis{z-index:1;filter:saturate(.5) brightness(1.05);
+  -webkit-mask-image:var(--borda);mask-image:var(--borda);
+  -webkit-mask-size:var(--artw,100%) var(--arth,100%);mask-size:var(--artw,100%) var(--arth,100%);
+  -webkit-mask-position:center;mask-position:center;
+  -webkit-mask-repeat:no-repeat;mask-repeat:no-repeat}
 .cor{z-index:2;
-  -webkit-mask-image:var(--mancha);mask-image:var(--mancha);
+  -webkit-mask-image:var(--mancha),var(--borda);mask-image:var(--mancha),var(--borda);
+  -webkit-mask-composite:source-in;mask-composite:intersect;
   -webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;
-  -webkit-mask-size:100% 100%;mask-size:100% 100%}
+  -webkit-mask-size:100% 100%,var(--artw,100%) var(--arth,100%);
+  mask-size:100% 100%,var(--artw,100%) var(--arth,100%);
+  -webkit-mask-position:center,center;mask-position:center,center}
 
 .h{display:block}
 .v{display:none}
@@ -123,27 +136,29 @@ body{background:var(--papel);color:var(--tinta);font-family:var(--disp);
 .colado.cor.v   .mat{background:#f4eadb}
 .colado.vazio{display:none}
 
+/* com uma porta aberta, o nome e o subtitulo saem de cena */
+.pagina.lendo .faixa.alta{opacity:0;pointer-events:none;
+  height:0;min-height:0;padding-top:0;padding-bottom:0;overflow:hidden;
+  transition:opacity var(--dur) var(--corpo), height var(--dur) var(--corpo),
+             padding var(--dur) var(--corpo)}
 .marcadas .porta{box-shadow:inset 0 0 0 1.5px rgba(220,0,90,.8)}
 
 /* o dentro do quadrado: papel por cima, com a sala ainda aparecendo atrás */
 .dentro{position:absolute;inset:0;z-index:12;overflow-y:auto;
-  background:rgba(243,239,228,.94);
-  padding:clamp(20px,5vh,46px) clamp(20px,6vw,56px) clamp(30px,6vh,60px);
+  background:var(--papel);
+  padding:clamp(58px,11vh,104px) clamp(20px,6vw,56px) clamp(30px,6vh,60px);
   opacity:0;visibility:hidden;pointer-events:none;
   transition:opacity var(--dur) var(--corpo), visibility 0s linear var(--dur)}
 .dentro.no{opacity:1;visibility:visible;pointer-events:auto;
   transition:opacity var(--dur) var(--corpo), visibility 0s}
 .dentro .folha{max-width:52ch;margin:0 auto}
 /* a foto entra emoldurada a lapis, como um quadro apoiado na sala */
-.dentro .quadro-foto{display:block;background:#f4f0e3;padding:clamp(9px,2vw,16px);
-  border:20px solid transparent;
-  border-image:url(casa/sala/moldura.png) 26 / 20px / 0 stretch;
-  margin:0 0 clamp(16px,3vh,26px)}
+.dentro .quadro-foto{display:block;margin:0 0 clamp(16px,3vh,26px)}
 .dentro .retrato{display:block;width:100%;height:auto}
 .dentro .retrato ~ p{font-size:clamp(13px,3.2vw,15px);line-height:1.55;color:#59544a}
-.dentro h2{font-family:var(--nome);font-weight:650;
-  font-variation-settings:"opsz" 120,"WONK" 1;line-height:1.02;letter-spacing:-.015em;
-  font-size:clamp(32px,8vw,56px);margin:0 0 clamp(16px,3vh,26px)}
+.dentro h2{font-family:"Letra Olivia",cursive;font-weight:400;
+  line-height:1.05;letter-spacing:0;color:#3a362d;
+  font-size:clamp(30px,6.4vw,50px);margin:0 0 clamp(16px,3vh,26px)}
 .dentro .folha.larga{max-width:72ch}
 .dentro h3{font-family:var(--disp);font-weight:700;font-stretch:88%;
   font-size:14px;letter-spacing:.17em;text-transform:uppercase;color:#6b6558;
@@ -177,31 +192,59 @@ body{background:var(--papel);color:var(--tinta);font-family:var(--disp);
    coluna e o texto corre na outra, justificado. A porta Olivia e o CV ficam
    de fora porque sao longos e precisam rolar. */
 @media (min-width:900px) and (min-height:560px) and (hover:hover){
-  .dentro.pagina{overflow:hidden}
-  .dentro.pagina .folha{max-width:min(100%,1180px);width:100%;height:100%;
-    display:grid;grid-template-rows:auto auto 1fr;gap:0}
-  .dentro.pagina h2{margin-bottom:clamp(14px,2.4vh,26px)}
-  .dentro.pagina .espelho{display:grid;grid-template-columns:1.15fr .85fr;
+  .dentro.revista{overflow:hidden}
+  .dentro.revista .folha{max-width:min(100%,1180px);width:100%;height:100%;
+    display:grid;grid-template-rows:auto 1fr;gap:0}
+  .dentro.revista h2{margin-bottom:clamp(14px,2.4vh,26px)}
+  .dentro.revista .espelho{display:grid;grid-template-columns:1.15fr .85fr;
     gap:clamp(28px,3.8vw,56px);align-items:start;min-height:0;overflow:hidden}
-  .dentro.pagina .espelho{align-items:stretch}
-  .dentro.pagina .espelho .quadro-foto{margin:0;height:100%;min-height:0;
+  .dentro.revista .espelho{align-items:stretch}
+  .dentro.revista .espelho .quadro-foto{margin:0;height:100%;min-height:0;
     display:flex;box-sizing:border-box}
-  .dentro.pagina .espelho .retrato{height:100%;min-height:0;object-fit:contain}
-  .dentro.pagina .corpo{text-align:justify;hyphens:auto;-webkit-hyphens:auto;
+  .dentro.revista .espelho .retrato{height:100%;min-height:0;object-fit:contain}
+  .dentro.revista .corpo{text-align:justify;hyphens:auto;-webkit-hyphens:auto;
     column-gap:clamp(26px,3.4vw,46px)}
-  .dentro.pagina .corpo p:first-child{font-size:clamp(17px,1.5vw,21px);line-height:1.45}
-  .dentro.pagina .corpo p:first-child::first-letter{float:left;font-family:var(--nome);
+  .dentro.revista .corpo p:first-child{font-size:clamp(17px,1.5vw,21px);line-height:1.45}
+  .dentro.revista .corpo p:first-child::first-letter{float:left;font-family:var(--nome);
     font-weight:650;font-size:3.1em;line-height:.82;padding:.06em .09em 0 0;color:var(--tinta)}
   /* porta sem foto: o texto abre em duas colunas, como pagina de revista */
-  .dentro.pagina .espelho.sem-foto{grid-template-columns:1fr}
-  .dentro.pagina .espelho.sem-foto .corpo{columns:2}
-  .dentro.pagina .espelho.sem-foto .corpo p:first-child{font-size:inherit;line-height:1.62}
-  .dentro.pagina .espelho.sem-foto .corpo p:first-child::first-letter{font-size:3.4em}
+  .dentro.revista .espelho.sem-foto{grid-template-columns:1fr}
+  .dentro.revista .espelho.sem-foto .corpo{columns:2}
+  .dentro.revista .espelho.sem-foto .corpo p:first-child{font-size:inherit;line-height:1.62}
+  .dentro.revista .espelho.sem-foto .corpo p:first-child::first-letter{font-size:3.4em}
 }
 .dentro .corpo p:last-child{margin-bottom:0}
-.volta{display:inline-flex;align-items:center;gap:8px;background:none;border:0;padding:0;
+/* a galeria vem depois da pagina de texto: a porta rola a partir dela */
+.dentro.com-galeria{overflow-y:auto}
+.dentro.com-galeria .folha{height:auto}
+.dentro.com-galeria .espelho{min-height:calc(100vh - 240px)}
+/* colunas em vez de grade: cada peca ocupa a altura que tem, sem buraco branco */
+.galeria{columns:2 210px;column-gap:clamp(12px,1.8vw,22px);
+  margin:clamp(40px,7vh,72px) 0 0;padding-top:clamp(26px,4vh,40px);
+  border-top:1px solid #e2dccb}
+.obra{break-inside:avoid;position:relative;margin:0 0 clamp(12px,1.8vw,22px);
+  display:block;width:100%;border:0;padding:0;background:none;cursor:pointer}
+.obra img{display:block;width:100%;height:auto}
+.obra.par img{aspect-ratio:5/3;object-fit:contain;background:#fcfcfb}
+.obra figcaption{position:absolute;inset:auto 0 0 0;
+  font-family:var(--disp);font-size:12px;line-height:1.45;text-align:left;
+  color:#2b2821;background:rgba(250,249,246,.93);padding:10px 12px;
+  opacity:0;transition:opacity 180ms var(--corpo)}
+.obra:hover figcaption,.obra:focus-visible figcaption{opacity:1}
+.obra figcaption b{display:block;font-family:var(--nome);font-size:14px;font-weight:600}
+/* a peca aberta, em cima de tudo */
+.lupa{position:fixed;inset:0;z-index:30;display:none;place-items:center;
+  background:rgba(250,249,246,.97);padding:clamp(16px,4vh,48px);cursor:zoom-out}
+.lupa.no{display:grid}
+.lupa img{max-width:100%;max-height:82vh;width:auto;height:auto;display:block;margin:0 auto}
+.lupa figcaption{font-family:var(--disp);font-size:13px;color:#59544a;
+  text-align:center;margin-top:16px;line-height:1.5}
+.lupa figcaption b{font-family:var(--nome);font-size:16px;font-weight:600;display:block}
+.volta{position:absolute;z-index:3;
+  top:clamp(26px,5.6vh,54px);left:clamp(14px,4vw,34px);
+  display:inline-flex;align-items:center;gap:8px;background:none;border:0;padding:0;
   font-family:var(--disp);font-size:11px;letter-spacing:.17em;text-transform:uppercase;
-  color:#59544a;cursor:pointer;margin-bottom:clamp(20px,4vh,38px)}
+  color:#59544a;cursor:pointer}
 .volta:hover{color:var(--tinta)}
 
 @media (hover:none){ .palco{cursor:auto} .cursor{display:none} .porta{cursor:pointer} }
@@ -214,7 +257,7 @@ body{background:var(--papel);color:var(--tinta);font-family:var(--disp);
 
 <div class="pagina">
   <header class="faixa alta">
-    <h1 style="margin:0;font:inherit"><img src="nome.png" alt="Olivia Kalicinski">
+    <h1>Olivia Kalicinski
       <small>growth · branding · code</small></h1>
   </header>
 
@@ -229,9 +272,11 @@ body{background:var(--papel);color:var(--tinta);font-family:var(--disp);
     <div class="colado lapis v" id="colado-lapis-v"><div class="mat"><img src="casa/sala/desenho-lapis.png" alt=""></div></div>
     <div class="colado cor   v" id="colado-cor-v"><div class="mat"><img src="casa/sala/desenho-cor.png" alt=""></div></div>
 
+    <figure class="lupa" id="lupa" aria-hidden="true"><div>
+      <img id="lupa-img" src="" alt=""><figcaption id="lupa-ficha"></figcaption></div></figure>
     <article class="dentro" id="dentro" aria-hidden="true">
+      <button class="volta" id="volta" type="button">← Back to the room</button>
       <div class="folha">
-        <button class="volta" id="volta" type="button">← Back to the room</button>
         <h2 id="dentro-titulo"></h2>
         <div id="dentro-texto"></div>
       </div>
@@ -555,6 +600,16 @@ function onde(e){
   const alvo=document.elementFromPoint(e.clientX,e.clientY);
   cursor.classList.toggle('porta', !!(alvo && alvo.closest('[data-porta]')));
 }
+/* clicar numa obra abre ela grande; clicar de novo fecha */
+document.addEventListener('click', e=>{
+  const b=e.target.closest && e.target.closest('.obra');
+  if(b){ const i=+b.dataset.n-1, f=FICHAS[i]||['Untitled','2024',''];
+    document.getElementById('lupa-img').src='img/galeria/'+b.dataset.n+'.webp';
+    document.getElementById('lupa-ficha').innerHTML='<b>'+f[0]+'</b>'+f[1]+(f[2]?' · '+f[2]:'');
+    lupa.classList.add('no'); lupa.setAttribute('aria-hidden','false'); return; }
+  if(e.target.closest('.lupa')){ lupa.classList.remove('no'); lupa.setAttribute('aria-hidden','true'); }
+});
+addEventListener('keydown', e=>{ if(e.key==='Escape') lupa.classList.remove('no'); });
 palco.addEventListener('pointermove', onde);
 palco.addEventListener('pointerdown', onde);
 palco.addEventListener('pointerleave', ()=>{ mancha(50,50,0); cursor.classList.remove('on'); });
@@ -562,77 +617,90 @@ palco.addEventListener('pointerleave', ()=>{ mancha(50,50,0); cursor.classList.r
 /* ---- o texto de cada porta ---- */
 const DENTRO={
   codigo:{ titulo:'Work', texto:[
-    'I taught myself to code because the work needed it before anyone was going to hire '+
-    'someone to do it.',
-    'What I run, I built: a React/TypeScript portal with 20+ landing pages (564 commits), '+
-    'the dashboards that read them, GA4 and UTM tracking end to end, and scheduled agents '+
-    'that pull the numbers every morning and flag what moved.',
-    'That is the point, not a side project. The budget rule I set — contribution margin '+
-    'per landing page instead of ROAS — only works because the pages, the tracking and the '+
-    'dashboard are one system. I own all three, so I can change all three in an afternoon.' ]},
+    'I taught myself to code because the work needed it before anyone was going to hire someone to do it.',
+    'What I run, I built: a React/TypeScript portal with 20+ landing pages and 564 commits, the Shopify storefront, the dashboards that read them, the GA4 and UTM tracking end to end, and scheduled agents that pull the numbers every morning and flag what moved.',
+    'The reason that matters is not the code. It is that I can change the measurement and the thing being measured on the same afternoon.',
+    'An example. A campaign landing page was converting at 6.7% against 0.9% for the product page taking most of the budget — and the checkout credited it with two orders out of fourteen. The number could not be true. The button was routing through an intermediate page that rewrote the source parameter, so nine of fourteen orders were filed under the wrong name. I rebuilt the link path and the fix shipped with the next campaign.',
+    'A bigger one. The purchase event was firing when the order was created, not when it was paid. Every platform ROAS in the company was inflated by about 12% — measured across 250 orders: 10% cancelled, 2% refunded. Discounting that is now a house rule before any budget decision.',
+    'Most growth work is reading numbers. Some of it is finding out the numbers are wrong.' ]},
 
   farm:{ titulo:'Farm', texto:[
-    'Sítio Solidão, the family artisanal cheese company, founded 1987. Six years there, '+
-    'from 2015 to 2021.',
-    'I created the trade marketing department from scratch and led a team of fourteen. '+
-    'I managed the key retail accounts and rebuilt the logistics and administrative '+
-    'workflows along the way.',
-    'It is where I learned that a brand is decided at the shelf, not in the deck.' ]},
+    'Sítio Solidão, the family artisanal cheese company, founded 1987 in Miguel Pereira. Six years there, from 2015 to 2021.',
+    'I created the trade marketing department from scratch and built its team: fourteen young women from the town, none of them with previous work experience, hired and trained from zero. I managed the key retail accounts — Zona Sul, Hortifruti — and rebuilt the logistics and administrative workflows along the way.',
+    'The company was the second generation of a sheep farm and cheese dairy. My job was to professionalise it: to find and build the things that let a small producer compete with companies a hundred times its size.',
+    'Working in a small city has its obstacles. Conservative thinking and a lack of resources are a hard place to run a company from. But that lack turns into an opportunity the moment you offer people information, training, and the sight of something else being possible.',
+    'It is also where I learned that a brand is decided at the shelf, not in the deck.' ]},
 
-  ceramica:{ titulo:'Pottery', texto:[
-    'I fire clay in open pits together with electronic waste, organic matter and discarded '+
-    'materials. The work is about the cycle of life, death and life, and about what human '+
-    'intervention does to the land.',
-    'Ceramics mentorship with Vera Machado, 2018 to 2020. Group shows at Casa da Escada '+
-    'Colorida and at EAV Parque Lage.' ]},
-
-  foto:{ titulo:'Photography', texto:[
-    'Four years as a full-time visual artist, 2021 to 2025 — photography, printmaking and '+
-    'installation, alongside the clay.',
-    'Award at Festival do Minuto 2024, Nano Minuto category, for the short film “Incêndio”. '+
-    'Casero Art Residency 2024, ten days in the Atlantic Forest. Commissioned photography '+
-    'and video for brands and private clients.',
-    'Not a detour. It is where the eye and the storytelling come from.' ]},
-
-  arte:{ titulo:'Art', texto:[
-    'Printmaking and installation, alongside the clay and the camera. Group shows at EAV '+
-    'Parque Lage in 2021 and Casa da Escada Colorida in 2023.',
-    'Ongoing critical mentorships with André Penteado — full scholarship — and Bruno Miguel. '+
-    'Four years of putting work in front of people whose job was to find what did not hold.',
-    'It left me one habit I use every week: judge the piece by what it does to the person '+
-    'in front of it, not by what I meant it to do.' ]},
+  arte:{ titulo:'Art', galeria:33, texto:[
+    'My practice explores the relationships between time, society and consumption, proposing a dialogue between the primitive and the contemporary. It works through installation, printmaking, sculpture and photography, and it investigates the cycles of life, death and life \u2014 impermanence, transformation, and the impact of human choices.',
+    'We live busy, interconnected, overwhelmed by endless stimuli. We consume objects, images and information at an unrelenting pace, leaving behind traces that accumulate without much thought. In the rush we lose sight of ourselves, of each other, and of the natural world around us.',
+    'The installations are built from raw ceramic tiles assembled like a painting, each one carrying what we throw away: dead insects, remote-control buttons, cable plugs, computer chips. One of them holds banana peels caught at different stages of decomposition, alongside wires and fragments of obsolete objects. In the engravings, the waste is pressed into the clay before it is fired.',
+    'The clay is ancestral \u2014 moulded and fired in open pits \u2014 and what it carries is contemporary. In photography I capture the same tension: nature against culture, the organic and the artificial coexisting in contrast.',
+    'What I propose is a space for pause, estrangement, curiosity and attention. What are we doing to the world? And what is the world doing to us?',
+    'Award at Festival do Minuto 2024, Nano Minuto category, for the short film <i>Inc\u00eandio</i>. Casero Art Residency, ten days in the Atlantic Forest at Itatiaia, mentored by the curator Fernanda Lopes. Group shows at EAV Parque Lage in 2021 and at Casa da Escada Colorida in 2023. Critical mentorships with Andr\u00e9 Penteado and with Ana Elisa Lizidia, both on scholarship, and with Bruno Miguel at Parque Lage since 2022. Ceramics with Vera Machado, 2018 to 2020.',
+    'Not a detour. It is where the eye comes from.' ]},
   metodo:{ titulo:'Method', texto:[
-    'A library of 534 reading notes — marketing, statistics, design, psychology, writing — '+
-    'indexed by argument rather than by book, so a claim can be looked up instead of '+
-    'remembered.',
-    'Out of it I built 17 rulebooks that an agent can actually execute. The one for auditing '+
-    'automated systems carries 332 checkable criteria drawn from 56 works, each with its '+
-    'source, its page, and a mark for how strong the evidence is: measured, author\u2019s '+
-    'recommendation, or inferred.',
-    'I did not build this to read more. I built it so that when I say something works, I can '+
-    'say where that came from and how sure I am.' ]},
+    'A library of 534 reading notes — marketing, statistics, design, psychology, writing — indexed by argument rather than by book, so a claim can be looked up instead of remembered.',
+    'Out of it I built 17 rulebooks that an agent can execute. The one for auditing automated systems carries 332 checkable criteria drawn from 56 works, each with its source, its page, and a mark for how strong the evidence is: measured, author’s recommendation, or inferred.',
+    'Around them run about 36 scheduled routines — ad watchers, dashboard readers, video triage, the end-of-day close — and a gate that holds back any entry whose number does not declare where it came from.',
+    'And a graveyard. Roughly fifty conclusions this house once used as rules, killed with the date and with whatever killed them. In September I audited nineteen fronts one by one and knocked down beliefs we were already acting on, including one that had become a creative standard.',
+    'That is the part I would defend hardest. Most teams keep what they learned. Almost nobody keeps a record of what they learned wrong — so they learn it again two years later, from scratch, with new people.',
+    'I did not build this to read more. I built it so that when I say something works, I can say where that came from and how sure I am.' ]},
+
+  eu:{ titulo:'Olivia', texto:[
+    'I am a visual artist and a mother, based in the countryside of Rio de Janeiro.',
+    'I spent nine years in management and marketing. In 2021, becoming a mother made me re-evaluate where my life was going, and I moved fully into art — photography, ceramics, printmaking, installation. Four years of it. Then I came back to growth, and brought the eye with me.',
+    'Today I am Head of Growth at a Brazilian DTC pet-food brand. I launched it: the brand did not exist when I arrived. I own its acquisition P&L — paid media, creators, CRM, CRO and retention — lead a team of four, and build the system that runs it.',
+    'Before that, six years at a family artisanal cheese company, where I created the trade marketing department and hired and trained its fourteen people, young women from the town with no previous work experience. And brand management at L’Oréal.',
+    'The two halves were never separate. My undergraduate thesis, in 2013, was on brand positioning through Pop Art — icons and symbols. I was already looking at the same thing, from the other side.',
+    'I am looking for a remote Head of Growth or Growth Lead role with an international team. Brazilian citizen, based in Rio de Janeiro (GMT-3). I don’t hold US work authorization and I’m not seeking sponsorship — I work as an independent contractor, or through an employer of record.' ]},
+
   joaquim:{ titulo:'Joaquim', foto:'img/joaquim.jpg', alt:'Joaquim at the sea',
     texto:[
-    'Joaquim, my son. He is nine, and we are great friends.',
-    'Shot on film.' ]},
-  eu:{ titulo:'Olivia', texto:[
-    'Head of Growth at a Brazilian DTC pet-food brand. I launched it: the brand did not '+
-    'exist when I arrived. Today I own its acquisition P&L — paid media, creators, CRM, '+
-    'CRO — lead a team of four, and build the system that runs it.',
-    'Before that: six years at a family artisanal cheese company, where I created the trade '+
-    'marketing department and hired and trained its fourteen people — young women from the '+
-    'town, none with previous work experience — and brand management at L\u2019Oréal. '+
-    'Then four years as a full-time visual artist. The order matters less than the fact that '+
-    'none of it was a detour.',
-    'I am looking for a remote Head of Growth or Growth Lead role with an international team.',
-    'Brazilian citizen, based in Rio de Janeiro (GMT-3). I don\u2019t hold US work authorization '+
-    'and I\u2019m not seeking sponsorship — I work as an independent contractor, or through an '+
-    'employer of record. My US visitor visa has eight years left, so on-site meetings need no '+
-    'lead time.',
-    'This room is the portfolio. Everything in it is something I actually do.' ]},
+    'This is Joaquim, my son. He is nine, and we are best friends.',
+    'I took this one on film, at the sea.',
+    'He is also the reason this room has two halves. I spent nine years in management '+
+    'and marketing; becoming his mother made me re-evaluate where my life was going, and '+
+    'in 2021 I moved fully into art. Everything here that is made by hand starts with him.' ]},
   cv:{ titulo:'Curriculum vitae', larga:true, molde:'cv-html' }
 };
 const dentro=document.getElementById('dentro');
+const FICHAS=[
+  ['Bug','2024','Raw ceramic tiles assembled like a painting, with dead insects, remote-control buttons, coloured powders, cable plugs and computer chips. 15 × 15 × 2 cm each',0],
+  ['Bug','2024','Raw ceramic tiles assembled like a painting, with dead insects, remote-control buttons, coloured powders, cable plugs and computer chips. 15 × 15 × 2 cm each',0],
+  ['Bug','2024','Raw ceramic tiles assembled like a painting, with dead insects, remote-control buttons, coloured powders, cable plugs and computer chips. 15 × 15 × 2 cm each',0],
+  ['Untitled','2024','Raw ceramic tiles with banana peels in stages of decomposition, wires, technological waste and fragments of obsolete objects. 15 × 15 × 2 cm each',0],
+  ['Untitled','2024','Raw ceramic tiles with banana peels in stages of decomposition, wires, technological waste and fragments of obsolete objects. 15 × 15 × 2 cm each',0],
+  ['Untitled','2024','Raw ceramic tiles with banana peels in stages of decomposition, wires, technological waste and fragments of obsolete objects. 15 × 15 × 2 cm each',0],
+  ['Untitled','2024','Raw ceramic tiles with banana peels in stages of decomposition, wires, technological waste and fragments of obsolete objects. 15 × 15 × 2 cm each',0],
+  ['Cabaças','2024','Wheel-thrown ceramic, engraved with waste, pit fired. Various sizes',0],
+  ['Untitled','2024','Ceramic, engraved with waste, pit fired',0],
+  ['Untitled','2024','Ceramic, engraved with waste, pit fired',0],
+  ['Untitled','2024','Ceramic tile, engraved with waste, pit fired. 25 × 15 × 1 cm',1],
+  ['Untitled','2024','Ceramic tile, engraved with waste, pit fired. 25 × 15 × 1 cm',1],
+  ['Untitled','2024','Ceramic tile, engraved with waste, pit fired. 25 × 15 × 1 cm',1],
+  ['Sobreviventes','2024','Ceramic, pit fired',0],
+  ['Sobreviventes (detalhe)','2024','Ceramic, pit fired',0],
+  ['Gate is straight, deep and wide','2024','Photography',0],
+  ['Break on through to the other side','2024','Photography',0],
+  ['Adagio','2024','Photography',0],
+  ['Locked In, Locked Out','2024','Photography',0],
+  ['Locked In, Locked Out','2024','Photography',0],
+  ['Locked In, Locked Out','2024','Photography',0],
+  ['Locked In, Locked Out','2024','Photography',0],
+  ['Serie, Data Dump','2024','Photography',0],
+  ['Data Dump','2024','Photography',0],
+  ['Data Dump','2024','Photography',0],
+  ['Data Dump','2024','Photography',0],
+  ['Data Dump','2024','Photography',0],
+  ['Untitled','2024','Photography',0],
+  ['Araponga','2024','Photography',0],
+  ['Embaúba','2024','Photography',0],
+  ['Embaúba','2024','Photography',0],
+  ['Untitled','2024','Wool, pigment and ceramic',0],
+  ['Untitled','2024','Wool, pigment and ceramic',0]
+];
+
 function abreDentro(id){
   const d=DENTRO[id]; if(!d) return;
   document.getElementById('dentro-titulo').textContent=d.titulo;
@@ -641,15 +709,25 @@ function abreDentro(id){
             : '<div class="espelho'+(d.foto?'':' sem-foto')+'">'
               + (d.foto ? '<figure class="quadro-foto"><img class="retrato" src="'+d.foto+
                           '" alt="'+(d.alt||'')+'"></figure>' : '')
-              + '<div class="corpo">'+d.texto.map(t=>'<p>'+t+'</p>').join('')+'</div></div>';
+              + '<div class="corpo">'+d.texto.map(t=>'<p>'+t+'</p>').join('')+'</div></div>'
+              + (d.galeria ? '<div class="galeria">'+Array.from({length:d.galeria},(_,i)=>{
+                  const n=String(i+1).padStart(2,'0'), fi=FICHAS[i]||['Untitled','2024',''];
+                  return '<button class="obra'+(fi[3]?' par':'')+'" type="button" data-n="'+n+'">'+
+                    '<img loading="lazy" src="img/galeria/'+n+'.webp" alt="'+fi[0]+'">'+
+                    '<figcaption><b>'+fi[0]+'</b>'+fi[1]+(fi[2]?' · '+fi[2]:'')+'</figcaption>'+
+                    '</button>';
+                }).join('')+'</div>' : '');
   /* pagina fixa, menos as duas que precisam rolar */
-  dentro.classList.toggle('pagina', !d.molde && id!=='eu');
+  dentro.classList.toggle('revista', !d.molde && id!=='eu');
+  dentro.classList.toggle('com-galeria', !!d.galeria);
   dentro.querySelector('.folha').classList.toggle('larga', !!d.larga);
   dentro.classList.add('no'); dentro.setAttribute('aria-hidden','false');
+  document.querySelector('.pagina').classList.add('lendo');
   dentro.scrollTop=0;
   document.getElementById('volta').focus();
 }
 function fechaDentro(){
+  document.querySelector('.pagina').classList.remove('lendo');
   dentro.classList.remove('no'); dentro.setAttribute('aria-hidden','true');
 }
 document.getElementById('volta').addEventListener('click', fechaDentro);
@@ -662,16 +740,16 @@ const PORTAS={
   v:[ {id:'codigo',  x:40,y:44,w:20,h:13, nome:'Work',        lado:'cima'},
       {id:'farm',    x:35,y:15,w:24,h:26, nome:'Farm',        lado:'esq'},
       {id:'arte',    x:30.6,y:34.8,w:7.2,h:6.1,nome:'Art',      lado:'baixo'},
-      {id:'ceramica',x:2, y:42,w:13,h:12, nome:'Pottery',     lado:'dir'},
-      {id:'foto',    x:48,y:55,w:9, h:6,  nome:'Photography', lado:'baixo'},
+      {id:'arte',    x:2, y:42,w:13,h:12, nome:'Art',         lado:'dir'},
+      {id:'arte',    x:48,y:55,w:9, h:6,  nome:'Art',        lado:'baixo'},
       {id:'metodo',  x:63,y:55,w:7, h:3.2,nome:'Method',      lado:'esq'},
       {id:'joaquim', x:18.8,y:33,w:10.4,h:7.8,nome:'Joaquim',   lado:'dir'},
       {id:'eu',      x:28,y:56,w:22,h:26, nome:'Olivia',      lado:'dir'} ],
   h:[ {id:'codigo',  x:46.5,y:37.5,w:17, h:14, nome:'Work',        lado:'cima'},
       {id:'farm',    x:44, y:5,   w:17, h:30,  nome:'Farm',        lado:'esq'},
       {id:'arte',    x:39.3,y:27.2,w:4.5,h:7.6, nome:'Art',         lado:'baixo'},
-      {id:'ceramica',x:21.5,y:35, w:7,  h:12,  nome:'Pottery',     lado:'dir'},
-      {id:'foto',    x:54, y:50.3,w:5.5,h:5,   nome:'Photography', lado:'baixo'},
+      {id:'arte',    x:21.5,y:35, w:7,  h:12,  nome:'Art',         lado:'dir'},
+      {id:'arte',    x:54, y:50.3,w:5.5,h:5,   nome:'Art',        lado:'baixo'},
       {id:'metodo',  x:62, y:52,  w:7,  h:4,   nome:'Method',      lado:'esq'},
       {id:'joaquim', x:31,  y:24.8,w:6.8, h:10.2,nome:'Joaquim',   lado:'cima'},
       {id:'eu',      x:36.5,y:52, w:17, h:31,  nome:'Olivia',      lado:'dir'} ]
@@ -703,6 +781,8 @@ function desenhaPortas(){
     palco.appendChild(b);
   });
   posicionaColado(c);
+  palco.style.setProperty('--artw', c.w+'px');
+  palco.style.setProperty('--arth', c.h+'px');
 }
 /* o miolo do quadro, em % da imagem: tapa o desenho que estava ali */
 function posicionaColado(c){
