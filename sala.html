@@ -36,10 +36,10 @@ body{background:var(--papel);color:var(--tinta);font-family:var(--disp);
   font-size:clamp(27px,6.6vw,44px);letter-spacing:-.012em;line-height:1;
   text-transform:none}
 /* quando o nome virar a letra dela, é trocar o texto do h1 por <img src="nome.png"> */
-.faixa.alta h1 img{display:block;height:clamp(30px,7.2vh,58px);width:auto;
+.faixa.alta h1 img{display:block;height:clamp(24px,5.6vh,45px);width:auto;
   image-rendering:auto;mix-blend-mode:multiply}
 .faixa.alta small{display:block;font-family:var(--disp);font-size:clamp(9.5px,2.4vw,11px);
-  font-weight:500;letter-spacing:.17em;text-transform:uppercase;opacity:.66;margin-top:7px}
+  font-weight:500;letter-spacing:.17em;text-transform:uppercase;opacity:.66;margin-top:12px}
 .faixa.baixa{border-top:1px solid #ddd8c9;color:#59544a;flex-wrap:wrap;
   font-size:clamp(11px,2.8vw,12.5px);letter-spacing:.1em}
 .faixa.baixa span{white-space:nowrap}
@@ -109,6 +109,20 @@ body{background:var(--papel);color:var(--tinta);font-family:var(--disp);
 
 .porta:focus-visible{outline:2px solid var(--tinta);outline-offset:3px}
 
+/* o cogumelo do Joaquim: vive numa moldura do tamanho do palco, para herdar
+   a mesma mancha do cursor que a camada de cor usa. o miolo tapa o quadro
+   que estava desenhado ali, com o creme da propria camada. */
+.colado{position:absolute;inset:0;z-index:1;pointer-events:none}
+.colado.cor{z-index:2}
+.colado .mat{position:absolute;width:0;height:0}
+.colado .mat img{position:absolute;left:50%;top:50%;width:92%;
+  transform:translate(-50%,-50%);display:block}
+.colado.lapis.h .mat{background:#faf3e6}
+.colado.cor.h   .mat{background:#f5e6d1}
+.colado.lapis.v .mat{background:#f5f0e3}
+.colado.cor.v   .mat{background:#f4eadb}
+.colado.vazio{display:none}
+
 .marcadas .porta{box-shadow:inset 0 0 0 1.5px rgba(220,0,90,.8)}
 
 /* o dentro do quadrado: papel por cima, com a sala ainda aparecendo atrás */
@@ -120,6 +134,13 @@ body{background:var(--papel);color:var(--tinta);font-family:var(--disp);
 .dentro.no{opacity:1;visibility:visible;pointer-events:auto;
   transition:opacity var(--dur) var(--corpo), visibility 0s}
 .dentro .folha{max-width:52ch;margin:0 auto}
+/* a foto entra emoldurada a lapis, como um quadro apoiado na sala */
+.dentro .quadro-foto{display:block;background:#f4f0e3;padding:clamp(9px,2vw,16px);
+  border:20px solid transparent;
+  border-image:url(casa/sala/moldura.png) 26 / 20px / 0 stretch;
+  margin:0 0 clamp(16px,3vh,26px)}
+.dentro .retrato{display:block;width:100%;height:auto}
+.dentro .retrato ~ p{font-size:clamp(13px,3.2vw,15px);line-height:1.55;color:#59544a}
 .dentro h2{font-family:var(--nome);font-weight:650;
   font-variation-settings:"opsz" 120,"WONK" 1;line-height:1.02;letter-spacing:-.015em;
   font-size:clamp(32px,8vw,56px);margin:0 0 clamp(16px,3vh,26px)}
@@ -176,6 +197,11 @@ body{background:var(--papel);color:var(--tinta);font-family:var(--disp);
     <img class="camada cor   h" src="casa/sala/cor-h.webp"   alt="">
     <img class="camada lapis v" src="casa/sala/lapis.webp"   alt="Olivia's work corner, drawn in pencil">
     <img class="camada cor   v" src="casa/sala/cor.webp"     alt="">
+
+    <div class="colado lapis h" id="colado-lapis-h"><div class="mat"><img src="casa/sala/desenho-lapis.png" alt=""></div></div>
+    <div class="colado cor   h" id="colado-cor-h"><div class="mat"><img src="casa/sala/desenho-cor.png" alt=""></div></div>
+    <div class="colado lapis v" id="colado-lapis-v"><div class="mat"><img src="casa/sala/desenho-lapis.png" alt=""></div></div>
+    <div class="colado cor   v" id="colado-cor-v"><div class="mat"><img src="casa/sala/desenho-cor.png" alt=""></div></div>
 
     <article class="dentro" id="dentro" aria-hidden="true">
       <div class="folha">
@@ -440,13 +466,17 @@ palco.addEventListener('pointerleave', ()=>{ mancha(50,50,0); cursor.classList.r
 
 /* ---- o texto de cada porta ---- */
 const DENTRO={
-  codigo:{ titulo:'The code', texto:[
-    'I taught myself to write code the way I learn everything else: by needing it first.',
-    'I build what I run — a React/TypeScript portal with 20+ landing pages (564 commits), '+
-    'dashboards, GA4 and UTM tracking, and the scheduled agent automations that read the '+
-    'numbers every morning. Nobody hired a developer. I stopped waiting for one.' ]},
+  codigo:{ titulo:'Work', texto:[
+    'I taught myself to code because the work needed it before anyone was going to hire '+
+    'someone to do it.',
+    'What I run, I built: a React/TypeScript portal with 20+ landing pages (564 commits), '+
+    'the dashboards that read them, GA4 and UTM tracking end to end, and scheduled agents '+
+    'that pull the numbers every morning and flag what moved.',
+    'That is the point, not a side project. The budget rule I set — contribution margin '+
+    'per landing page instead of ROAS — only works because the pages, the tracking and the '+
+    'dashboard are one system. I own all three, so I can change all three in an afternoon.' ]},
 
-  farm:{ titulo:'The farm', texto:[
+  farm:{ titulo:'Farm', texto:[
     'Sítio Solidão, the family artisanal cheese company, founded 1987. Six years there, '+
     'from 2015 to 2021.',
     'I created the trade marketing department from scratch and led a team of fourteen. '+
@@ -454,14 +484,14 @@ const DENTRO={
     'workflows along the way.',
     'It is where I learned that a brand is decided at the shelf, not in the deck.' ]},
 
-  ceramica:{ titulo:'The pottery', texto:[
+  ceramica:{ titulo:'Pottery', texto:[
     'I fire clay in open pits together with electronic waste, organic matter and discarded '+
     'materials. The work is about the cycle of life, death and life, and about what human '+
     'intervention does to the land.',
     'Ceramics mentorship with Vera Machado, 2018 to 2020. Group shows at Casa da Escada '+
     'Colorida and at EAV Parque Lage.' ]},
 
-  foto:{ titulo:'The photography', texto:[
+  foto:{ titulo:'Photography', texto:[
     'Four years as a full-time visual artist, 2021 to 2025 — photography, printmaking and '+
     'installation, alongside the clay.',
     'Award at Festival do Minuto 2024, Nano Minuto category, for the short film “Incêndio”. '+
@@ -469,8 +499,36 @@ const DENTRO={
     'and video for brands and private clients.',
     'Not a detour. It is where the eye and the storytelling come from.' ]},
 
-  violao:{ titulo:'The guitar', texto:['Still writing this one.']},
-
+  arte:{ titulo:'Art', texto:[
+    'Printmaking and installation, alongside the clay and the camera. Group shows at EAV '+
+    'Parque Lage in 2021 and Casa da Escada Colorida in 2023.',
+    'Ongoing critical mentorships with André Penteado — full scholarship — and Bruno Miguel. '+
+    'Four years of putting work in front of people whose job was to find what did not hold.',
+    'It left me one habit I use every week: judge the piece by what it does to the person '+
+    'in front of it, not by what I meant it to do.' ]},
+  metodo:{ titulo:'Method', texto:[
+    'A library of 534 reading notes — marketing, statistics, design, psychology, writing — '+
+    'indexed by argument rather than by book, so a claim can be looked up instead of '+
+    'remembered.',
+    'Out of it I built 17 rulebooks that an agent can actually execute. The one for auditing '+
+    'automated systems carries 332 checkable criteria drawn from 56 works, each with its '+
+    'source, its page, and a mark for how strong the evidence is: measured, author\u2019s '+
+    'recommendation, or inferred.',
+    'I did not build this to read more. I built it so that when I say something works, I can '+
+    'say where that came from and how sure I am.' ]},
+  joaquim:{ titulo:'Joaquim', foto:'img/joaquim.jpg', alt:'Joaquim at the sea',
+    texto:[
+    'Joaquim, my son. He is nine, and we are great friends.',
+    'Shot on film.' ]},
+  eu:{ titulo:'Olivia', texto:[
+    'Head of Growth at a Brazilian DTC pet-food brand. I own the acquisition P&L — paid '+
+    'media, creators, CRM, CRO — lead a team of four, and build the system that runs it.',
+    'Before that: six years at a family artisanal cheese company, where I created the trade '+
+    'marketing department and led fourteen people, and brand management at L\u2019Oréal. '+
+    'Then four years as a full-time visual artist. The order matters less than the fact that '+
+    'none of it was a detour.',
+    'I am looking for a remote Head of Growth or Growth Lead role with an international team.',
+    'This room is the portfolio. Everything in it is something I actually do.' ]},
   cv:{ titulo:'Curriculum vitae', larga:true, molde:'cv-html' }
 };
 const dentro=document.getElementById('dentro');
@@ -479,7 +537,9 @@ function abreDentro(id){
   document.getElementById('dentro-titulo').textContent=d.titulo;
   document.getElementById('dentro-texto').innerHTML =
     d.molde ? document.getElementById(d.molde).innerHTML
-            : d.texto.map(t=>'<p>'+t+'</p>').join('');
+            : (d.foto ? '<span class="quadro-foto"><img class="retrato" src="'+d.foto+
+                        '" alt="'+(d.alt||'')+'"></span>' : '')
+              + d.texto.map(t=>'<p>'+t+'</p>').join('');
   dentro.querySelector('.folha').classList.toggle('larga', !!d.larga);
   dentro.classList.add('no'); dentro.setAttribute('aria-hidden','false');
   dentro.scrollTop=0;
@@ -493,17 +553,26 @@ document.getElementById('link-cv').addEventListener('click', e=>{ e.preventDefau
 addEventListener('keydown', e=>{ if(e.key==='Escape') fechaDentro(); });
 
 /* ---- as portas: caixa em % da IMAGEM, não do palco ---- */
+const MIOLO={ h:{x:32.25,y:26.15,w:4.55,h:7.4}, v:{x:20.6,y:34.05,w:6.8,h:5.7} };
 const PORTAS={
-  v:[ {id:'codigo', x:33,y:43,w:30,h:12, nome:'The code',        lado:'cima'},
-      {id:'foto',   x:50,y:53.5,w:8,h:4.5, nome:'The photography', lado:'baixo'},
-      {id:'farm',   x:11,y:17,w:51,h:26, nome:'The farm',        lado:'dir'},
-      {id:'ceramica',x:1,y:51,w:11,h:18, nome:'The pottery',     lado:'dir'},
-      {id:'violao', x:82,y:50,w:10,h:25, nome:'The guitar',      lado:'esq'} ],
-  h:[ {id:'codigo', x:40,y:38,w:22,h:15, nome:'The code',        lado:'cima'},
-      {id:'foto',   x:54,y:52,w:6.5,h:5, nome:'The photography', lado:'baixo'},
-      {id:'farm',   x:25,y:3, w:37,h:33, nome:'The farm',        lado:'esq'},
-      {id:'ceramica',x:17,y:50,w:9,h:20, nome:'The pottery',     lado:'esq'},
-      {id:'violao', x:74,y:47,w:9, h:33, nome:'The guitar',      lado:'dir'} ]
+  v:[ {id:'codigo',  x:40,y:44,w:20,h:13, nome:'Work',        lado:'cima'},
+      {id:'farm',    x:35,y:15,w:24,h:26, nome:'Farm',        lado:'esq'},
+      {id:'arte',    x:30.6,y:34.8,w:7.2,h:6.1,nome:'Art',      lado:'baixo'},
+      {id:'ceramica',x:2, y:42,w:13,h:12, nome:'Pottery',     lado:'dir'},
+      {id:'ceramica',x:62,y:47,w:11,h:7,  nome:'Pottery',     lado:'esq'},
+      {id:'foto',    x:48,y:55,w:9, h:6,  nome:'Photography', lado:'baixo'},
+      {id:'metodo',  x:63,y:55,w:7, h:3.2,nome:'Method',      lado:'esq'},
+      {id:'joaquim', x:18.8,y:33,w:10.4,h:7.8,nome:'Joaquim',   lado:'dir'},
+      {id:'eu',      x:28,y:56,w:22,h:26, nome:'Olivia',      lado:'dir'} ],
+  h:[ {id:'codigo',  x:46.5,y:37.5,w:17, h:14, nome:'Work',        lado:'cima'},
+      {id:'farm',    x:44, y:5,   w:17, h:30,  nome:'Farm',        lado:'esq'},
+      {id:'arte',    x:39.3,y:27.2,w:4.5,h:7.6, nome:'Art',         lado:'baixo'},
+      {id:'ceramica',x:21.5,y:35, w:7,  h:12,  nome:'Pottery',     lado:'dir'},
+      {id:'ceramica',x:63, y:42,  w:5,  h:7,   nome:'Pottery',     lado:'esq'},
+      {id:'foto',    x:54, y:50.3,w:5.5,h:5,   nome:'Photography', lado:'baixo'},
+      {id:'metodo',  x:62, y:52,  w:7,  h:4,   nome:'Method',      lado:'esq'},
+      {id:'joaquim', x:31,  y:24.8,w:6.8, h:10.2,nome:'Joaquim',   lado:'cima'},
+      {id:'eu',      x:36.5,y:52, w:17, h:31,  nome:'Olivia',      lado:'dir'} ]
 };
 function orientacao(){ return matchMedia('(max-aspect-ratio:1/1)').matches ? 'v' : 'h'; }
 function imagemVisivel(){ return palco.querySelector('.lapis.'+orientacao()); }
@@ -531,7 +600,28 @@ function desenhaPortas(){
     b.addEventListener('click', ()=>abreDentro(p.id));
     palco.appendChild(b);
   });
+  posicionaColado(c);
 }
+/* o miolo do quadro, em % da imagem: tapa o desenho que estava ali */
+function posicionaColado(c){
+  const o=orientacao(), m=MIOLO[o];
+  palco.querySelectorAll('.colado.'+o+' .mat').forEach(el=>{
+    el.style.left   = (c.x + c.w*m.x/100)+'px';
+    el.style.top    = (c.y + c.h*m.y/100)+'px';
+    el.style.width  = (c.w*m.w/100)+'px';
+    el.style.height = (c.h*m.h/100)+'px';
+  });
+}
+/* enquanto o desenho nao existir, a folha e a porta ficam fora da sala */
+function semDesenho(im){
+  im.parentNode.classList.add('vazio');
+  ['h','v'].forEach(o=>{ const i=PORTAS[o].findIndex(d=>d.id==='joaquim'); if(i>=0) PORTAS[o].splice(i,1); });
+  palco.querySelectorAll('.porta[data-porta="joaquim"]').forEach(n=>n.remove());
+}
+palco.querySelectorAll('.colado .mat img').forEach(im=>{
+  if(im.complete && !im.naturalWidth) semDesenho(im);
+  else im.addEventListener('error', ()=>semDesenho(im));
+});
 if(location.hash==='#marcadas') palco.classList.add('marcadas');
 addEventListener('resize', desenhaPortas);
 imagemVisivel().complete ? desenhaPortas() : imagemVisivel().addEventListener('load', desenhaPortas);
