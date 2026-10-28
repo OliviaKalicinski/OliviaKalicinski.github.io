@@ -173,6 +173,32 @@ body{background:var(--papel);color:var(--tinta);font-family:var(--disp);
 .dentro p{font-family:var(--disp);font-weight:400;font-stretch:normal;
   font-size:clamp(14px,3.6vw,17px);line-height:1.62;color:#3a362d;margin:0 0 1.05em;
   letter-spacing:0;text-transform:none}
+/* no computador a porta e uma pagina de revista: nao rola, a foto ocupa uma
+   coluna e o texto corre na outra, justificado. A porta Olivia e o CV ficam
+   de fora porque sao longos e precisam rolar. */
+@media (min-width:900px) and (min-height:560px) and (hover:hover){
+  .dentro.pagina{overflow:hidden}
+  .dentro.pagina .folha{max-width:min(100%,1180px);width:100%;height:100%;
+    display:grid;grid-template-rows:auto auto 1fr;gap:0}
+  .dentro.pagina h2{margin-bottom:clamp(14px,2.4vh,26px)}
+  .dentro.pagina .espelho{display:grid;grid-template-columns:1.15fr .85fr;
+    gap:clamp(28px,3.8vw,56px);align-items:start;min-height:0;overflow:hidden}
+  .dentro.pagina .espelho{align-items:stretch}
+  .dentro.pagina .espelho .quadro-foto{margin:0;height:100%;min-height:0;
+    display:flex;box-sizing:border-box}
+  .dentro.pagina .espelho .retrato{height:100%;min-height:0;object-fit:contain}
+  .dentro.pagina .corpo{text-align:justify;hyphens:auto;-webkit-hyphens:auto;
+    column-gap:clamp(26px,3.4vw,46px)}
+  .dentro.pagina .corpo p:first-child{font-size:clamp(17px,1.5vw,21px);line-height:1.45}
+  .dentro.pagina .corpo p:first-child::first-letter{float:left;font-family:var(--nome);
+    font-weight:650;font-size:3.1em;line-height:.82;padding:.06em .09em 0 0;color:var(--tinta)}
+  /* porta sem foto: o texto abre em duas colunas, como pagina de revista */
+  .dentro.pagina .espelho.sem-foto{grid-template-columns:1fr}
+  .dentro.pagina .espelho.sem-foto .corpo{columns:2}
+  .dentro.pagina .espelho.sem-foto .corpo p:first-child{font-size:inherit;line-height:1.62}
+  .dentro.pagina .espelho.sem-foto .corpo p:first-child::first-letter{font-size:3.4em}
+}
+.dentro .corpo p:last-child{margin-bottom:0}
 .volta{display:inline-flex;align-items:center;gap:8px;background:none;border:0;padding:0;
   font-family:var(--disp);font-size:11px;letter-spacing:.17em;text-transform:uppercase;
   color:#59544a;cursor:pointer;margin-bottom:clamp(20px,4vh,38px)}
@@ -234,7 +260,8 @@ body{background:var(--papel);color:var(--tinta);font-family:var(--disp);
         dashboards, GA4 tracking and scheduled agent automations.</li>
     </ul>
     <p>Before this: six years at a family-owned cheese company, where I created the trade
-      marketing department and led a team of 14, and brand management at L'Oréal (Garnier).</p>
+      marketing department and built its team — fourteen young women from the town, none with
+      previous work experience — and brand management at L'Oréal (Garnier).</p>
     <p>From 2021 to 2025 I worked as a visual artist — ceramics, photography and installation,
       awarded at Festival do Minuto 2024. Not a detour: it is where the eye and the
       storytelling come from.</p>
@@ -341,7 +368,10 @@ body{background:var(--papel);color:var(--tinta);font-family:var(--disp);
         <p>Family-owned artisanal cheese company founded in 1987, supplying Rio de Janeiro and
           the surrounding region.</p>
         <ul>
-          <li>Created the trade marketing department from scratch and led a team of 14</li>
+          <li>Created the trade marketing department from scratch and built its team:
+            fourteen young women from the town, none of them with previous work experience,
+            hired and trained from zero. Weekly sales grew 30%, and 70% of them went back to
+            school</li>
           <li>Managed key retail accounts, including Zona Sul and Hortifruti</li>
           <li>Led the company's professionalisation: implemented management systems across
             departments and rebuilt logistics and administrative workflows</li>
@@ -490,7 +520,7 @@ body{background:var(--papel);color:var(--tinta);font-family:var(--disp);
 
     <h3>Languages</h3>
     <p>Portuguese (native) · English (full professional) ·
-      German (professional working) · Spanish (elementary)</p>
+      German (intermediate) · Spanish (elementary)</p>
 
     <h3>Contact</h3>
     <p><a href="mailto:olivia.kalicinski@gmail.com">olivia.kalicinski@gmail.com</a><br>
@@ -591,7 +621,8 @@ const DENTRO={
     'exist when I arrived. Today I own its acquisition P&L — paid media, creators, CRM, '+
     'CRO — lead a team of four, and build the system that runs it.',
     'Before that: six years at a family artisanal cheese company, where I created the trade '+
-    'marketing department and led fourteen people, and brand management at L\u2019Oréal. '+
+    'marketing department and hired and trained its fourteen people — young women from the '+
+    'town, none with previous work experience — and brand management at L\u2019Oréal. '+
     'Then four years as a full-time visual artist. The order matters less than the fact that '+
     'none of it was a detour.',
     'I am looking for a remote Head of Growth or Growth Lead role with an international team.',
@@ -608,9 +639,12 @@ function abreDentro(id){
   document.getElementById('dentro-titulo').textContent=d.titulo;
   document.getElementById('dentro-texto').innerHTML =
     d.molde ? document.getElementById(d.molde).innerHTML
-            : (d.foto ? '<span class="quadro-foto"><img class="retrato" src="'+d.foto+
-                        '" alt="'+(d.alt||'')+'"></span>' : '')
-              + d.texto.map(t=>'<p>'+t+'</p>').join('');
+            : '<div class="espelho'+(d.foto?'':' sem-foto')+'">'
+              + (d.foto ? '<figure class="quadro-foto"><img class="retrato" src="'+d.foto+
+                          '" alt="'+(d.alt||'')+'"></figure>' : '')
+              + '<div class="corpo">'+d.texto.map(t=>'<p>'+t+'</p>').join('')+'</div></div>';
+  /* pagina fixa, menos as duas que precisam rolar */
+  dentro.classList.toggle('pagina', !d.molde && id!=='eu');
   dentro.querySelector('.folha').classList.toggle('larga', !!d.larga);
   dentro.classList.add('no'); dentro.setAttribute('aria-hidden','false');
   dentro.scrollTop=0;
